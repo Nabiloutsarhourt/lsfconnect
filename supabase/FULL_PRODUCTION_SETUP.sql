@@ -274,9 +274,9 @@ CREATE POLICY "Audit admin only" ON audit_logs FOR SELECT USING (EXISTS (SELECT 
 
 -- 13. SEED DATA
 INSERT INTO forum_categories (title, description, slug, icon, order_index) VALUES
-('Linguistique LSF', 'Discussions générales sur la structure et l\'évolution de la LSF.', 'linguistique', 'Hand', 1),
-('Domaine Judiciaire', 'Partagez vos expériences et posez des questions sur l\'interprétation juridique.', 'judiciaire', 'Gavel', 2),
+('Linguistique LSF', 'Discussions générales sur la structure et l''évolution de la LSF.', 'linguistique', 'Hand', 1),
+('Domaine Judiciaire', 'Partagez vos expériences et posez des questions sur l''interprétation juridique.', 'judiciaire', 'Gavel', 2),
 ('Domaine Médical', 'Vocabulaire spécifique et situations courantes en milieu hospitalier.', 'medical', 'Stethoscope', 3),
 ('Domaine Social', 'Intervention en milieu scolaire, associatif et familial.', 'social', 'Users', 4),
-('Entraide Étudiants', 'Besoin d\'aide pour un exercice ou un cours ? C\'est ici !', 'entraide', 'GraduationCap', 5)
+('Entraide Étudiants', 'Besoin d''aide pour un exercice ou un cours ? C''est ici !', 'entraide', 'GraduationCap', 5)
 ON CONFLICT (slug) DO NOTHING;
