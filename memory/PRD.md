@@ -8,6 +8,32 @@
 
 ---
 
+## Design System (Updated Jan 2026)
+
+### Color Palette
+- **Primary:** Deep Indigo (#312E81) - Trust, Authority, Calm
+- **Secondary:** Warm Amber (#F59E0B) - Human connection, Attention
+- **Background:** Warm Alabaster (#FAFAF9)
+- **Success:** Emerald (#059669)
+
+### Typography
+- **Headings:** Outfit (Google Fonts)
+- **Body:** Plus Jakarta Sans (Google Fonts)
+
+### Icons & Components
+- **Icons:** @phosphor-icons/react (Duotone weight)
+- **Animations:** Framer Motion (fade-up, stagger)
+- **Toasts:** Sonner
+
+### Design Principles
+- Accessibility-first (4.5:1 contrast ratio minimum)
+- Glassmorphism header with backdrop-blur
+- Bento grid layouts for expert cards
+- Pill-shaped buttons with shadow effects
+- Card hover animations with translateY
+
+---
+
 ## User Personas
 
 ### 1. Client (Hearing Person)
