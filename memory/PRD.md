@@ -100,6 +100,18 @@
 
 ### Completed - January 2026
 
+#### UI/UX Redesign (Latest)
+- [x] New color scheme: Deep Indigo + Warm Amber
+- [x] Outfit + Plus Jakarta Sans typography
+- [x] Phosphor Icons (Duotone weight)
+- [x] Framer Motion animations
+- [x] Glassmorphism header with scroll effect
+- [x] Bento grid layout for expert cards
+- [x] Card hover effects with shadows
+- [x] Pill-shaped buttons
+- [x] Gradient backgrounds
+- [x] Improved accessibility (focus states, contrast)
+
 #### Frontend Pages
 - [x] Landing page with hero, features, testimonials, stats
 - [x] Expert listing page with search/filter
