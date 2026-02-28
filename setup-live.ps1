@@ -9,7 +9,8 @@ Write-Host "===========================================" -ForegroundColor Cyan
 Write-Host "`n[1/4] Checking production build..." -ForegroundColor Yellow
 if (Test-Path ".next") {
     Write-Host "✓ Build found." -ForegroundColor Green
-} else {
+}
+else {
     Write-Host "! No build found. Running 'npm run build'..." -ForegroundColor Gray
     npm run build
 }

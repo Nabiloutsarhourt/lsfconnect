@@ -4,8 +4,8 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
-  CheckCircle, Lightning, ShieldCheck, GlobeSimple,
-  Star, ArrowRight, HandWaving, Sparkle
+    CheckCircle, Lightning, ShieldCheck, GlobeSimple,
+    Star, ArrowRight, HandWaving, Sparkle
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -61,13 +61,48 @@ const plans = [
 
 export default function PricingPage() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("monthly");
+    const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+    const handleSubscribe = async (plan: any) => {
+        if (plan.name === "Standard") return;
+        if (plan.name === "Entreprise") {
+            window.location.href = "/contact";
+            return;
+        }
+
+        setLoadingPlan(plan.name);
+        try {
+            // Placeholder IDs - in production these would be real Stripe Price IDs
+            const priceId = billingCycle === "monthly" ? "price_1Pro_Monthly" : "price_1Pro_Annually";
+
+            const response = await fetch("/api/checkout/subscription", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ priceId }),
+            });
+
+            if (response.status === 401) {
+                window.location.href = `/login?redirect=/pricing`;
+                return;
+            }
+
+            const data = await response.json();
+            if (data.url) {
+                window.location.href = data.url;
+            }
+        } catch (error) {
+            console.error("Subscription error:", error);
+        } finally {
+            setLoadingPlan(null);
+        }
+    };
 
     return (
         <div className="flex flex-col bg-stone-50/30">
             {/* Hero Section */}
             <section className="py-20 md:py-28 bg-white border-b border-stone-100">
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <motion.div 
+                    <motion.div
                         className="text-center space-y-6 max-w-3xl mx-auto"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -77,12 +112,12 @@ export default function PricingPage() {
                             <Lightning size={14} weight="duotone" className="text-amber-500" />
                             Tarification Simple
                         </div>
-                        
+
                         <h1 className="font-heading text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight" data-testid="pricing-page-title">
                             Investissez dans votre{" "}
                             <span className="text-gradient">Avenir LSF</span>
                         </h1>
-                        
+
                         <p className="text-lg md:text-xl text-stone-600 max-w-2xl mx-auto">
                             Des plans flexibles pour tous les besoins, de l'initiation personnelle à l'excellence professionnelle.
                         </p>
@@ -157,7 +192,7 @@ export default function PricingPage() {
                                     )}>
                                         Plan {plan.name}
                                     </span>
-                                    
+
                                     <div className="mt-4 mb-3">
                                         {plan.price === "Custom" ? (
                                             <span className="font-heading text-4xl font-bold text-slate-900">Sur Devis</span>
@@ -173,7 +208,7 @@ export default function PricingPage() {
                                             </div>
                                         )}
                                     </div>
-                                    
+
                                     <p className="text-sm text-stone-500">{plan.description}</p>
                                 </div>
 
@@ -196,8 +231,9 @@ export default function PricingPage() {
                                 </div>
 
                                 <div className="p-8 md:p-10 pt-0">
-                                    <Link
-                                        href={plan.href}
+                                    <Button
+                                        onClick={() => handleSubscribe(plan)}
+                                        disabled={loadingPlan === plan.name}
                                         className={cn(
                                             "w-full inline-flex items-center justify-center gap-2 px-6 py-4 text-base font-semibold rounded-full transition-all active:scale-[0.98]",
                                             plan.popular
@@ -206,9 +242,15 @@ export default function PricingPage() {
                                         )}
                                         data-testid={`pricing-cta-${plan.name.toLowerCase()}`}
                                     >
-                                        {plan.cta}
-                                        <ArrowRight size={18} weight="bold" />
-                                    </Link>
+                                        {loadingPlan === plan.name ? (
+                                            <Sparkle size={18} weight="bold" className="animate-spin" />
+                                        ) : (
+                                            <>
+                                                {plan.cta}
+                                                <ArrowRight size={18} weight="bold" />
+                                            </>
+                                        )}
+                                    </Button>
                                 </div>
                             </motion.div>
                         ))}
@@ -276,11 +318,11 @@ export default function PricingPage() {
 
                         <div className="relative z-10 space-y-6 max-w-2xl mx-auto">
                             <HandWaving size={48} weight="duotone" className="text-amber-400 mx-auto" />
-                            
+
                             <p className="font-heading text-2xl md:text-3xl font-bold text-white leading-relaxed">
                                 "LSFCONNECT a transformé l'accès à la formation. C'est l'outil indispensable pour toute personne souhaitant s'investir sérieusement."
                             </p>
-                            
+
                             <div className="space-y-1">
                                 <span className="block text-amber-400 font-semibold">Jean-Luc R.</span>
                                 <span className="block text-indigo-200 text-sm">Interprète Expert Juridique</span>

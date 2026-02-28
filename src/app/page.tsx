@@ -11,6 +11,7 @@ import {
   Quotes, Play, Star, CheckCircle, Sparkle
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 
 const fadeInUp = {
   initial: { opacity: 0, y: 24 },
@@ -101,7 +102,13 @@ export default function Home() {
                       key={i}
                       className="w-11 h-11 rounded-full border-3 border-white bg-stone-100 overflow-hidden shadow-md"
                     >
-                      <img src={url} alt="Expert" className="w-full h-full object-cover" />
+                      <Image
+                        src={url}
+                        alt="Expert"
+                        width={44}
+                        height={44}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                   ))}
                   <div className="w-11 h-11 rounded-full border-3 border-white bg-indigo-900 flex items-center justify-center text-white text-xs font-bold shadow-md">
@@ -339,7 +346,13 @@ export default function Home() {
               >
                 <div className="flex items-center gap-4 mb-6">
                   <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-stone-100">
-                    <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />
+                    <Image
+                      src={testimonial.avatar}
+                      alt={testimonial.name}
+                      width={56}
+                      height={56}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <h4 className="font-bold text-slate-900">{testimonial.name}</h4>

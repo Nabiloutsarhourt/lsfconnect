@@ -21,15 +21,19 @@ Exemple de sujets :
 
 export async function POST(req: Request) {
     try {
-        const { messages } = await req.json();
+        const { messages, context } = await req.json();
         const lastMessage = messages[messages.length - 1].content;
+        const isLearning = context?.isLearning;
+        const currentPath = context?.path;
 
         // Note: In a production environment with an API Key, we would call Gemini or OpenAI here.
         // For this implementation, we simulate a professional AI response structure.
 
         let responseText = "";
 
-        if (lastMessage.toLowerCase().includes("structure") || lastMessage.toLowerCase().includes("phrase")) {
+        if (isLearning && lastMessage.toLowerCase().includes("aide")) {
+            responseText = `Je vois que vous êtes actuellement dans un module de formation. En tant que LSF Buddy, je suis là pour éclaircir les points théoriques : grammaire spatio-temporelle, syntaxe ou culture sourde. Comment puis-je vous aider sur cette leçon ?`;
+        } else if (lastMessage.toLowerCase().includes("structure") || lastMessage.toLowerCase().includes("phrase")) {
             responseText = "En LSF, la structure de base est souvent 'Temps > Lieu > Objet > Sujet > Verbe'. C'est ce qu'on appelle une structure spatio-temporelle. Les sourcils et les expressions du visage jouent également un rôle crucial pour marquer le type de phrase (affirmative, négative ou interrogative).";
         } else if (lastMessage.toLowerCase().includes("culture") || lastMessage.toLowerCase().includes("sourd")) {
             responseText = "La Culture Sourde est riche et possède son propre patrimoine. Elle ne se limite pas à la langue des signes, mais inclut des valeurs de solidarité, une histoire marquée par la lutte pour la reconnaissance linguistique (notamment après l'interdiction de 1880) et des codes sociaux spécifiques comme le contact visuel constant.";

@@ -17,15 +17,18 @@ import {
     Dialog, DialogContent, DialogHeader,
     DialogTitle, DialogDescription, DialogFooter
 } from "@/components/ui/dialog";
+import { checkCourseCompletion } from "@/lib/lms";
 
 type Submission = {
     id: string;
+    user_id: string;
+    exercise_id: string;
     content: string;
     grade: number | null;
     feedback: string | null;
     status: 'pending' | 'graded';
     created_at: string;
-    exercise: { title: string };
+    exercise: { title: string; lesson_id: string };
     profiles: { full_name: string; email: string };
 };
 
@@ -45,7 +48,7 @@ export function GradingHub() {
             .from('case_study_submissions')
             .select(`
         *,
-        exercise:exercises(title),
+        exercise:exercises(title, lesson_id),
         profiles:user_id(full_name, email)
       `)
             .order('created_at', { ascending: false });
@@ -71,6 +74,26 @@ export function GradingHub() {
             .eq('id', selectedSubmission.id);
 
         if (!error) {
+            // 1. Mark lesson as completed for the student
+            await supabase.from('user_progress').upsert({
+                user_id: selectedSubmission.user_id,
+                lesson_id: selectedSubmission.exercise.lesson_id,
+                is_completed: true,
+                completed_at: new Date().toISOString()
+            });
+
+            // 2. Find Course ID to check for full completion
+            const { data: lessonData } = await supabase
+                .from('lessons')
+                .select('module:modules(course_id)')
+                .eq('id', selectedSubmission.exercise.lesson_id)
+                .single();
+
+            const courseId = (lessonData as any)?.module?.course_id;
+            if (courseId) {
+                await checkCourseCompletion(selectedSubmission.user_id, courseId);
+            }
+
             setSelectedSubmission(null);
             fetchSubmissions();
         }

@@ -15,6 +15,8 @@ interface Course {
     domain: string;
     is_published: boolean;
     created_at: string;
+    lesson_count?: number;
+    quiz_count?: number;
 }
 
 export default function AdminCoursesPage() {
@@ -22,18 +24,56 @@ export default function AdminCoursesPage() {
     const [courses, setCourses] = useState<Course[]>([]);
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        async function fetchCourses() {
-            const { data, error } = await supabase
-                .from("courses")
-                .select("*")
-                .order("created_at", { ascending: false });
+    const fetchCourses = async () => {
+        setLoading(true);
+        const { data, error } = await supabase
+            .from("courses")
+            .select(`
+                *,
+                modules (
+                    lessons (
+                        id,
+                        exercises (id)
+                    )
+                )
+            `)
+            .order("created_at", { ascending: false });
 
-            if (data) setCourses(data);
-            setLoading(false);
+        if (data) {
+            const formatted = data.map((c: any) => {
+                let lessonCount = 0;
+                let quizCount = 0;
+                c.modules?.forEach((m: any) => {
+                    lessonCount += m.lessons?.length || 0;
+                    m.lessons?.forEach((l: any) => {
+                        quizCount += l.exercises?.length || 0;
+                    });
+                });
+                return { ...c, lesson_count: lessonCount, quiz_count: quizCount };
+            });
+            setCourses(formatted);
         }
+        setLoading(false);
+    };
+
+    useEffect(() => {
         fetchCourses();
     }, []);
+
+    const handleDeleteCourse = async (id: string) => {
+        if (!confirm("Voulez-vous vraiment supprimer ce cours et tout son contenu (modules, leçons, quiz) ?")) return;
+
+        const { error } = await supabase
+            .from("courses")
+            .delete()
+            .eq("id", id);
+
+        if (!error) {
+            setCourses(courses.filter(c => c.id !== id));
+        } else {
+            alert("Erreur lors de la suppression.");
+        }
+    };
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
@@ -42,12 +82,17 @@ export default function AdminCoursesPage() {
                     <h1 className="text-3xl font-extrabold tracking-tight text-slate-900">Gestion des Cours</h1>
                     <p className="text-muted-foreground font-medium text-sm mt-1">Créez et gérez vos programmes pédagogiques LSF.</p>
                 </div>
-                <Button asChild className="h-12 px-6 rounded-2xl shadow-xl shadow-primary/20 font-bold gap-2">
-                    <Link href="/dashboard/admin/courses/new">
-                        <Plus className="h-5 w-5" />
-                        Nouveau Cours
-                    </Link>
-                </Button>
+                <div className="flex gap-4">
+                    <Button variant="outline" onClick={() => fetchCourses()} className="h-12 px-6 rounded-2xl font-bold gap-2">
+                        Rafraîchir
+                    </Button>
+                    <Button asChild className="h-12 px-6 rounded-2xl shadow-xl shadow-primary/20 font-bold gap-2">
+                        <Link href="/dashboard/admin/courses/new">
+                            <Plus className="h-5 w-5" />
+                            Nouveau Cours
+                        </Link>
+                    </Button>
+                </div>
             </div>
 
             {loading ? (
@@ -74,7 +119,8 @@ export default function AdminCoursesPage() {
                     {courses.map((course) => (
                         <Card key={course.id} className="group overflow-hidden rounded-3xl border-slate-200 transition-all hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1">
                             <div className="h-40 bg-slate-100 relative overflow-hidden">
-                                <div className="absolute top-4 right-4 flex gap-2">
+                                <Link href={`/dashboard/admin/courses/${course.id}`} className="absolute inset-0 z-10" />
+                                <div className="absolute top-4 right-4 flex gap-2 z-20">
                                     <span className={cn(
                                         "px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest flex items-center gap-1.5 shadow-sm",
                                         course.is_published ? "bg-green-100 text-green-700" : "bg-amber-100 text-amber-700"
@@ -108,22 +154,27 @@ export default function AdminCoursesPage() {
                             <CardContent className="p-6 pt-0 flex items-center gap-4 text-slate-400">
                                 <div className="flex items-center gap-1.5 text-xs font-bold">
                                     <Video className="h-4 w-4" />
-                                    <span>8 Leçons</span>
+                                    <span>{course.lesson_count} Leçons</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 text-xs font-bold">
                                     <FileText className="h-4 w-4" />
-                                    <span>2 Quiz</span>
+                                    <span>{course.quiz_count} Quiz</span>
                                 </div>
                             </CardContent>
                             <div className="p-4 border-t border-slate-50 flex items-center justify-between bg-slate-50/30">
                                 <Button variant="ghost" size="sm" asChild className="font-bold text-xs rounded-lg hover:bg-white transition-all">
                                     <Link href={`/dashboard/admin/courses/${course.id}`}>Gérer le contenu</Link>
                                 </Button>
-                                <div className="flex items-center gap-1">
+                                <div className="flex items-center gap-1 z-20">
                                     <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white text-slate-400 hover:text-primary">
                                         <Edit className="h-4 w-4" />
                                     </Button>
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 rounded-lg hover:bg-white text-slate-400 hover:text-destructive">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => handleDeleteCourse(course.id)}
+                                        className="h-8 w-8 rounded-lg hover:bg-white text-slate-400 hover:text-destructive"
+                                    >
                                         <Trash className="h-4 w-4" />
                                     </Button>
                                 </div>

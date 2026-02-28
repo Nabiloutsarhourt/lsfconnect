@@ -1,20 +1,33 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, Suspense } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 import {
     Send, User, Search,
     MoreVertical, Phone, Video,
     Check, CheckCheck, Loader2,
-    MessageSquare, Hand, Sparkles
+    MessageSquare, Hand, Sparkles,
+    ChevronLeft
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 
-export default function MessagingPage() {
+export default function MessagingPageWrapper() {
+    return (
+        <Suspense fallback={<div className="flex items-center justify-center h-[70vh]"><Loader2 className="h-10 w-10 animate-spin text-primary" /></div>}>
+            <MessagingPage />
+        </Suspense>
+    );
+}
+
+function MessagingPage() {
     const supabase = createClient();
+    const searchParams = useSearchParams();
+    const expertId = searchParams.get("expertId");
+
     const [conversations, setConversations] = useState<any[]>([]);
     const [selectedConv, setSelectedConv] = useState<any>(null);
     const [messages, setMessages] = useState<any[]>([]);
@@ -46,13 +59,43 @@ export default function MessagingPage() {
             .order("last_message_at", { ascending: false });
 
         if (data) {
-            setConversations(data.map(c => ({
+            const mapped = data.map((c: any) => ({
                 ...c,
                 otherUser: c.participant_1_id === user.id ? c.p2 : c.p1
-            })));
+            }));
+            setConversations(mapped);
+
+            if (expertId) {
+                const existing = mapped.find((c: any) => c.otherUser.id === expertId);
+                if (existing) {
+                    setSelectedConv(existing);
+                } else {
+                    const { data: newConv } = await supabase
+                        .from("conversations")
+                        .insert({
+                            participant_1_id: user.id,
+                            participant_2_id: expertId
+                        })
+                        .select(`
+                            *,
+                            p1:profiles!participant_1_id(id, full_name, avatar_url, role),
+                            p2:profiles!participant_2_id(id, full_name, avatar_url, role)
+                        `)
+                        .single();
+
+                    if (newConv) {
+                        const formatted = {
+                            ...newConv,
+                            otherUser: newConv.participant_1_id === user.id ? newConv.p2 : newConv.p1
+                        };
+                        setConversations(prev => [formatted, ...prev]);
+                        setSelectedConv(formatted);
+                    }
+                }
+            }
         }
         setLoading(false);
-    }, [supabase]);
+    }, [supabase, expertId]);
 
     const fetchMessages = useCallback(async (convId: string) => {
         const { data } = await supabase
@@ -61,7 +104,17 @@ export default function MessagingPage() {
             .eq("conversation_id", convId)
             .order("created_at", { ascending: true });
 
-        if (data) setMessages(data);
+        if (data) {
+            setMessages(data);
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                await supabase
+                    .from("messages")
+                    .update({ is_read: true })
+                    .eq("conversation_id", convId)
+                    .neq("sender_id", user.id);
+            }
+        }
     }, [supabase]);
 
     useEffect(() => {
@@ -72,7 +125,6 @@ export default function MessagingPage() {
         if (selectedConv) {
             fetchMessages(selectedConv.id);
 
-            // Subscribe to real-time messages
             const channel = supabase
                 .channel(`messages:${selectedConv.id}`)
                 .on('postgres_changes', {
@@ -80,7 +132,7 @@ export default function MessagingPage() {
                     schema: 'public',
                     table: 'messages',
                     filter: `conversation_id=eq.${selectedConv.id}`
-                }, (payload) => {
+                }, (payload: any) => {
                     setMessages(prev => [...prev, payload.new]);
                 })
                 .subscribe();
@@ -104,6 +156,10 @@ export default function MessagingPage() {
 
         if (!error) {
             setNewMessage("");
+            // Update last_message_at locally for sorting
+            setConversations(prev => prev.map(c =>
+                c.id === selectedConv.id ? { ...c, last_message_at: new Date().toISOString() } : c
+            ).sort((a, b) => new Date(b.last_message_at).getTime() - new Date(a.last_message_at).getTime()));
         }
         setSending(false);
     };
@@ -116,7 +172,6 @@ export default function MessagingPage() {
 
     return (
         <div className="h-[calc(100vh-140px)] -m-6 md:-m-12 overflow-hidden flex bg-white border border-slate-100 rounded-[3rem] shadow-2xl relative">
-            {/* Conversations List */}
             <aside className={cn(
                 "w-full md:w-[400px] border-r border-slate-50 flex flex-col bg-slate-50/30",
                 selectedConv ? "hidden md:flex" : "flex"
@@ -169,10 +224,8 @@ export default function MessagingPage() {
                 </div>
             </aside>
 
-            {/* Chat Area */}
             {selectedConv ? (
                 <main className="flex-1 flex flex-col min-w-0 bg-white">
-                    {/* Chat Header */}
                     <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-white/80 backdrop-blur-md sticky top-0 z-10">
                         <div className="flex items-center gap-4">
                             <Button
@@ -198,20 +251,8 @@ export default function MessagingPage() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5">
-                                <Phone className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:text-primary hover:bg-primary/5">
-                                <Video className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" className="rounded-xl text-slate-400 hover:bg-slate-50">
-                                <MoreVertical className="h-4 w-4" />
-                            </Button>
-                        </div>
                     </div>
 
-                    {/* Messages List */}
                     <div className="flex-1 overflow-y-auto p-8 space-y-6 bg-slate-50/30">
                         {messages.map((msg, i) => {
                             const isMe = msg.sender_id === userId;
@@ -240,21 +281,15 @@ export default function MessagingPage() {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Chat Input */}
                     <div className="p-8 border-t border-slate-50 bg-white">
                         <form onSubmit={handleSendMessage} className="flex gap-4">
                             <div className="flex-1 relative group">
                                 <Input
                                     value={newMessage}
-                                    onChange={(e) => setNewMessage(e.target.value)}
+                                    onChange={(e: any) => setNewMessage(e.target.value)}
                                     placeholder="Écrivez votre message..."
                                     className="h-16 rounded-[2rem] border-slate-100 bg-slate-50/50 px-8 font-medium italic focus:bg-white transition-all shadow-inner"
                                 />
-                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-                                    <Button type="button" variant="ghost" size="icon" className="text-slate-300 hover:text-primary rounded-xl">
-                                        <Hand className="h-5 w-5" />
-                                    </Button>
-                                </div>
                             </div>
                             <Button
                                 type="submit"
@@ -278,13 +313,5 @@ export default function MessagingPage() {
                 </div>
             )}
         </div>
-    );
-}
-
-function ChevronLeft({ className }: { className?: string }) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cn("lucide lucide-chevron-left", className)}>
-            <path d="m15 18-6-6 6-6" />
-        </svg>
     );
 }

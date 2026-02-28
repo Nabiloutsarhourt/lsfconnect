@@ -13,6 +13,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { CaseStudyExercise } from "@/components/exercises/CaseStudyExercise";
 import { awardPoints } from "@/lib/gamification";
+import { checkCourseCompletion } from "@/lib/lms";
 
 export default function StudentQuizPage() {
     const { id: courseId, lessonId } = useParams();
@@ -103,6 +104,9 @@ export default function StudentQuizPage() {
                 // Award Gamification Points
                 const isPerfect = percentage === 100;
                 await awardPoints(user.id, isPerfect ? 'QUIZ_PERFECT' : 'QUIZ_PASS');
+
+                // Check for course completion and issue certificate
+                await checkCourseCompletion(user.id, courseId as string);
             }
         }
 

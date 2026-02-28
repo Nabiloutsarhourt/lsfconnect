@@ -33,12 +33,101 @@ const MOCK_COMPLETION_DATA = [
 ];
 
 export function BusinessIntelligence() {
+    const supabase = createClient();
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState({
+        revenue: 0,
+        users: 0,
+        successRate: 0,
+        liveSessions: 0
+    });
+    const [revenueData, setRevenueData] = useState<any[]>([]);
+    const [completionData, setCompletionData] = useState<any[]>([]);
 
     useEffect(() => {
-        const timer = setTimeout(() => setLoading(false), 1000);
-        return () => clearTimeout(timer);
-    }, []);
+        async function fetchStats() {
+            setLoading(true);
+
+            // 1. Subscription Stats
+            const { count: activeSubs } = await supabase
+                .from('subscriptions')
+                .select('*', { count: 'exact', head: true })
+                .eq('status', 'active');
+
+            // Calculate simulated MRR based on active subs (approx 25€ avg)
+            const mrrValue = (activeSubs || 0) * 25;
+
+            // 2. Total Users
+            const { count: userCount } = await supabase
+                .from('profiles')
+                .select('*', { count: 'exact', head: true });
+
+            // 3. Success Rate
+            const { data: attempts } = await supabase
+                .from('exercise_attempts')
+                .select('is_passed');
+            const passed = attempts?.filter(a => a.is_passed).length || 0;
+            const avgSuccess = attempts?.length ? Math.round((passed / attempts.length) * 100) : 0;
+
+            // 4. Live Sessions (Today)
+            const today = new Date().toISOString().split('T')[0];
+            const { count: sessionCount } = await supabase
+                .from('bookings')
+                .select('*', { count: 'exact', head: true })
+                .gte('scheduled_at', today);
+
+            setStats({
+                revenue: mrrValue,
+                users: userCount || 0,
+                successRate: avgSuccess,
+                liveSessions: sessionCount || 0
+            });
+
+            // 5. Completion Data (by Domain)
+            const { data: domainStats } = await supabase
+                .from('exercise_attempts')
+                .select(`
+                    is_passed,
+                    exercise:exercises (
+                        lesson:lessons (
+                            module:modules (
+                                course:courses (domain)
+                            )
+                        )
+                    )
+                `);
+
+            if (domainStats) {
+                const grouped: Record<string, { total: number, passed: number }> = {
+                    'Judicial': { total: 0, passed: 0 },
+                    'Medical': { total: 0, passed: 0 },
+                    'Commercial': { total: 0, passed: 0 },
+                    'Social': { total: 0, passed: 0 }
+                };
+
+                domainStats.forEach((row: any) => {
+                    const domain = row.exercise?.lesson?.module?.course?.domain;
+                    if (domain && grouped[domain]) {
+                        grouped[domain].total++;
+                        if (row.is_passed) grouped[domain].passed++;
+                    }
+                });
+
+                const formatted = Object.entries(grouped).map(([name, data]) => ({
+                    name,
+                    rate: data.total ? Math.round((data.passed / data.total) * 100) : 0
+                }));
+                setCompletionData(formatted);
+            }
+
+            // Fallback for revenue chart (keep mock but could be real monthly grouping)
+            setRevenueData(MOCK_REVENUE_DATA);
+
+            setLoading(false);
+        }
+
+        fetchStats();
+    }, [supabase]);
 
     if (loading) return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-pulse">
@@ -55,10 +144,10 @@ export function BusinessIntelligence() {
             {/* KPI Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[
-                    { label: "Revenu Total", value: "33,700 €", change: "+12%", icon: CreditCard, color: "text-green-500", trend: "up" },
-                    { label: "Utilisateurs Actifs", value: "1,240", change: "+5%", icon: Users, color: "text-blue-500", trend: "up" },
-                    { label: "Taux de Succès", value: "82%", change: "-2%", icon: Target, color: "text-primary", trend: "down" },
-                    { label: "Sessions Live/J", value: "14", change: "+18%", icon: Activity, color: "text-orange-500", trend: "up" },
+                    { label: "Revenu Total", value: `${stats.revenue.toLocaleString()} €`, change: "+12%", icon: CreditCard, color: "text-green-500", trend: "up" },
+                    { label: "Utilisateurs Actifs", value: stats.users.toString(), change: "+5%", icon: Users, color: "text-blue-500", trend: "up" },
+                    { label: "Taux de Succès", value: `${stats.successRate}%`, change: "-2%", icon: Target, color: "text-primary", trend: "down" },
+                    { label: "Sessions Live/J", value: stats.liveSessions.toString(), change: "+18%", icon: Activity, color: "text-orange-500", trend: "up" },
                 ].map((kpi, i) => (
                     <Card key={i} className="rounded-[2rem] border-none shadow-xl bg-white p-6 flex flex-col justify-between group hover:-translate-y-1 transition-all">
                         <div className="flex items-center justify-between mb-4">
@@ -95,7 +184,7 @@ export function BusinessIntelligence() {
 
                     <div className="h-72 w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <AreaChart data={MOCK_REVENUE_DATA}>
+                            <AreaChart data={revenueData}>
                                 <defs>
                                     <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="5%" stopColor="#E11D48" stopOpacity={0.1} />
@@ -132,15 +221,14 @@ export function BusinessIntelligence() {
 
                     <div className="h-72 w-full">
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={MOCK_COMPLETION_DATA} layout="vertical">
+                            <BarChart data={completionData} layout="vertical">
                                 <XAxis type="number" hide />
                                 <YAxis
                                     dataKey="name"
                                     type="category"
                                     axisLine={false}
                                     tickLine={false}
-                                    tick={{ fontSize: 8, fontWeight: 900, fill: '#94a3b8', textTransform: 'uppercase' }}
-                                    width={80}
+
                                 />
                                 <Tooltip cursor={{ fill: 'transparent' }} />
                                 <Bar

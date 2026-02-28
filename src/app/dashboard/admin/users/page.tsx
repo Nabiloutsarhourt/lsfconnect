@@ -70,10 +70,29 @@ export default function AdminUsersPage() {
         }
     };
 
-    const toggleStatus = async (userId: string, currentTier: string) => {
-        // Simple 'deactivation' logic by changing tier to 'banned' or similar
-        // For now let's just use a role change or metadata
-        // We'll just demonstrate the role update for now
+    const toggleStatus = async (userId: string, currentStatus: boolean) => {
+        setUpdating(userId);
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .update({ is_active: !currentStatus })
+                .eq("id", userId);
+
+            if (!error) {
+                // Record audit log
+                await supabase.rpc("record_audit_log", {
+                    p_action: currentStatus ? "deactivate_user" : "activate_user",
+                    p_target_id: userId,
+                    p_target_type: "user",
+                    p_details: { previous_status: currentStatus }
+                });
+                fetchUsers();
+            }
+        } catch (err) {
+            console.error(err);
+        } finally {
+            setUpdating(null);
+        }
     };
 
     const filteredUsers = users.filter(user =>
@@ -100,8 +119,8 @@ export default function AdminUsersPage() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <Button variant="outline" className="h-12 w-12 rounded-xl border-slate-100 p-0 text-slate-400">
-                        <Filter className="h-5 w-5" />
+                    <Button variant="outline" onClick={() => fetchUsers()} className="h-12 w-12 rounded-xl border-slate-100 p-0 text-slate-400">
+                        <Loader2 className={cn("h-5 w-5", loading && "animate-spin")} />
                     </Button>
                 </div>
             </div>
@@ -119,96 +138,112 @@ export default function AdminUsersPage() {
                     </Card>
                 ) : (
                     <div className="bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 border border-slate-50 overflow-hidden">
-                        <table className="w-full text-left border-collapse">
-                            <thead>
-                                <tr className="bg-slate-50/50 border-b border-slate-100">
-                                    <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Utilisateur</th>
-                                    <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Rôle</th>
-                                    <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Abonnement</th>
-                                    <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Date d'inscription</th>
-                                    <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {filteredUsers.map((user) => (
-                                    <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors border-b border-slate-50 last:border-0">
-                                        <td className="p-8">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black uppercase shadow-inner overflow-hidden border border-white">
-                                                    {user.avatar_url ? (
-                                                        <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        user.full_name?.charAt(0) || user.email?.charAt(0)
-                                                    )}
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse min-w-[1000px]">
+                                <thead>
+                                    <tr className="bg-slate-50/50 border-b border-slate-100">
+                                        <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Utilisateur</th>
+                                        <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Rôle</th>
+                                        <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Statut</th>
+                                        <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Date d'inscription</th>
+                                        <th className="p-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {filteredUsers.map((user) => (
+                                        <tr key={user.id} className="group hover:bg-slate-50/30 transition-colors border-b border-slate-50 last:border-0">
+                                            <td className="p-8">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black uppercase shadow-inner overflow-hidden border border-white">
+                                                        {user.avatar_url ? (
+                                                            <img src={user.avatar_url} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            user.full_name?.charAt(0) || user.email?.charAt(0)
+                                                        )}
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-black text-slate-900 leading-none mb-1">{user.full_name || "Anonyme"}</p>
+                                                        <p className="text-xs text-slate-400 font-medium italic leading-none">{user.email}</p>
+                                                    </div>
                                                 </div>
-                                                <div>
-                                                    <p className="font-black text-slate-900 leading-none mb-1">{user.full_name || "Anonyme"}</p>
-                                                    <p className="text-xs text-slate-400 font-medium italic leading-none">{user.email}</p>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="p-8">
-                                            <span className={cn(
-                                                "px-4 py-1.5 rounded-full font-black uppercase tracking-widest text-[8px] border",
-                                                user.role === 'admin' ? "bg-red-50 text-red-600 border-red-100 shadow-sm shadow-red-50" :
-                                                    user.role === 'expert' ? "bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-50" :
-                                                        "bg-blue-50 text-blue-600 border-blue-100 shadow-sm shadow-blue-50"
-                                            )}>
-                                                {user.role}
-                                            </span>
-                                        </td>
-                                        <td className="p-8">
-                                            <div className="flex items-center gap-2">
+                                            </td>
+                                            <td className="p-8">
                                                 <span className={cn(
                                                     "px-4 py-1.5 rounded-full font-black uppercase tracking-widest text-[8px] border",
-                                                    user.subscription_tier === 'pro' ? "bg-primary/10 text-primary border-primary/20 shadow-sm shadow-primary/5" :
-                                                        user.subscription_tier === 'enterprise' ? "bg-slate-900 text-white border-slate-900" :
-                                                            "bg-slate-100 text-slate-500 border-slate-200"
+                                                    user.role === 'admin' ? "bg-red-50 text-red-600 border-red-100 shadow-sm shadow-red-50" :
+                                                        user.role === 'expert' ? "bg-amber-50 text-amber-600 border-amber-100 shadow-sm shadow-amber-50" :
+                                                            "bg-blue-50 text-blue-600 border-blue-100 shadow-sm shadow-blue-50"
                                                 )}>
-                                                    {user.subscription_tier || 'Free'}
+                                                    {user.role}
                                                 </span>
-                                            </div>
-                                        </td>
-                                        <td className="p-8 text-xs text-slate-400 font-bold uppercase tracking-widest">
-                                            {user.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR', {
-                                                year: 'numeric',
-                                                month: 'short',
-                                                day: 'numeric'
-                                            }) : "N/A"}
-                                        </td>
-                                        <td className="p-8">
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-400">
-                                                        {updating === user.id ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <MoreVertical className="h-5 w-5" />}
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end" className="w-56 rounded-2xl border-slate-100 shadow-2xl p-2">
-                                                    <DropdownMenuLabel className="px-4 py-2 text-[10px] font-black uppercase text-slate-400 tracking-widest">Modifier le Rôle</DropdownMenuLabel>
-                                                    <DropdownMenuItem onClick={() => updateRole(user.id, 'admin')} className="rounded-xl px-4 py-3 cursor-pointer group">
-                                                        <Shield className="mr-3 h-4 w-4 text-red-500 group-hover:scale-110 transition-transform" />
-                                                        <span className="font-bold text-slate-700">Passer Admin</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => updateRole(user.id, 'expert')} className="rounded-xl px-4 py-3 cursor-pointer group">
-                                                        <Star className="mr-3 h-4 w-4 text-amber-500 group-hover:scale-110 transition-transform" />
-                                                        <span className="font-bold text-slate-700">Passer Expert</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem onClick={() => updateRole(user.id, 'client')} className="rounded-xl px-4 py-3 cursor-pointer group">
-                                                        <User className="mr-3 h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" />
-                                                        <span className="font-bold text-slate-700">Passer Client</span>
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuSeparator className="bg-slate-50 my-2" />
-                                                    <DropdownMenuItem className="rounded-xl px-4 py-3 cursor-pointer text-red-600 group focus:bg-red-50">
-                                                        <Ban className="mr-3 h-4 w-4 group-hover:scale-110 transition-transform" />
-                                                        <span className="font-bold">Déactiver</span>
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                            </td>
+                                            <td className="p-8">
+                                                <div className="flex items-center gap-2">
+                                                    <span className={cn(
+                                                        "px-4 py-1.5 rounded-full font-black uppercase tracking-widest text-[8px] border flex items-center gap-1.5",
+                                                        user.is_active !== false ? "bg-green-50 text-green-600 border-green-100 shadow-sm" : "bg-slate-100 text-slate-400 border-slate-200"
+                                                    )}>
+                                                        <span className={cn("w-1.5 h-1.5 rounded-full", user.is_active !== false ? "bg-green-500" : "bg-slate-300")} />
+                                                        {user.is_active !== false ? 'Actif' : 'Banni'}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className="p-8 text-xs text-slate-400 font-bold uppercase tracking-widest">
+                                                {user.created_at ? new Date(user.created_at).toLocaleDateString('fr-FR', {
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: 'numeric'
+                                                }) : "N/A"}
+                                            </td>
+                                            <td className="p-8">
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl hover:bg-slate-100 text-slate-400">
+                                                            {updating === user.id ? <Loader2 className="h-4 w-4 animate-spin text-primary" /> : <MoreVertical className="h-5 w-5" />}
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-56 rounded-2xl border-slate-100 shadow-2xl p-2">
+                                                        <DropdownMenuLabel className="px-4 py-2 text-[10px] font-black uppercase text-slate-400 tracking-widest">Modifier le Rôle</DropdownMenuLabel>
+                                                        <DropdownMenuItem onClick={() => updateRole(user.id, 'admin')} className="rounded-xl px-4 py-3 cursor-pointer group">
+                                                            <Shield className="mr-3 h-4 w-4 text-red-500 group-hover:scale-110 transition-transform" />
+                                                            <span className="font-bold text-slate-700">Passer Admin</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => updateRole(user.id, 'expert')} className="rounded-xl px-4 py-3 cursor-pointer group">
+                                                            <Star className="mr-3 h-4 w-4 text-amber-500 group-hover:scale-110 transition-transform" />
+                                                            <span className="font-bold text-slate-700">Passer Expert</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem onClick={() => updateRole(user.id, 'client')} className="rounded-xl px-4 py-3 cursor-pointer group">
+                                                            <User className="mr-3 h-4 w-4 text-blue-500 group-hover:scale-110 transition-transform" />
+                                                            <span className="font-bold text-slate-700">Passer Client</span>
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuSeparator className="bg-slate-50 my-2" />
+                                                        <DropdownMenuItem
+                                                            onClick={() => toggleStatus(user.id, user.is_active !== false)}
+                                                            className={cn(
+                                                                "rounded-xl px-4 py-3 cursor-pointer group focus:bg-red-50",
+                                                                user.is_active !== false ? "text-red-600" : "text-green-600"
+                                                            )}
+                                                        >
+                                                            {user.is_active !== false ? (
+                                                                <>
+                                                                    <Ban className="mr-3 h-4 w-4 group-hover:scale-110 transition-transform" />
+                                                                    <span className="font-bold">Désactiver</span>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <CheckCircle2 className="mr-3 h-4 w-4 group-hover:scale-110 transition-transform" />
+                                                                    <span className="font-bold">Réactiver</span>
+                                                                </>
+                                                            )}
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
             </div>

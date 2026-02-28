@@ -48,3 +48,24 @@ export async function createBookingPaymentIntent(amount: number, expertStripeId:
         },
     });
 }
+/**
+ * Creates a Stripe Checkout Session for a subscription.
+ */
+export async function createSubscriptionCheckoutSession(userId: string, email: string, priceId: string) {
+    return await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        line_items: [
+            {
+                price: priceId,
+                quantity: 1,
+            },
+        ],
+        mode: 'subscription',
+        customer_email: email,
+        success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/user?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
+        metadata: {
+            userId,
+        },
+    });
+}

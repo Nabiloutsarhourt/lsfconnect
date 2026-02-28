@@ -5,9 +5,9 @@ import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import {
-  MagnifyingGlass, MapPin, Star, VideoCamera,
-  HandWaving, Funnel, ShieldCheck, ArrowRight,
-  Sparkle, Clock, User
+    MagnifyingGlass, MapPin, Star, VideoCamera,
+    HandWaving, Funnel, ShieldCheck, ArrowRight,
+    Sparkle, Clock, User
 } from "@phosphor-icons/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -25,9 +25,9 @@ interface Expert {
 }
 
 const fadeInUp = {
-  initial: { opacity: 0, y: 20 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.5 }
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
 };
 
 export default function ExpertsPage() {
@@ -106,7 +106,7 @@ export default function ExpertsPage() {
             {/* Hero Header */}
             <section className="bg-white border-b border-stone-100">
                 <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-                    <motion.div 
+                    <motion.div
                         className="flex flex-col md:flex-row md:items-end justify-between gap-8"
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -125,7 +125,7 @@ export default function ExpertsPage() {
                                 Parcourez les profils de nos interprètes certifiés en Langue des Signes Française.
                             </p>
                         </div>
-                        
+
                         <div className="flex items-center gap-3 w-full md:w-auto">
                             <div className="relative flex-1 md:w-80">
                                 <MagnifyingGlass size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
@@ -138,8 +138,8 @@ export default function ExpertsPage() {
                                     className="w-full pl-12 pr-4 h-12 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm font-medium transition-all"
                                 />
                             </div>
-                            <Button 
-                                variant="outline" 
+                            <Button
+                                variant="outline"
                                 className="h-12 px-4 rounded-xl border-stone-200 hover:bg-stone-50"
                                 data-testid="expert-filter-btn"
                             >
@@ -183,7 +183,7 @@ export default function ExpertsPage() {
                                             <User size={64} weight="duotone" />
                                         </div>
                                     )}
-                                    
+
                                     {/* Overlay Badges */}
                                     <div className="absolute top-4 left-4 right-4 flex justify-between items-start">
                                         {expert.experts?.is_verified && (
@@ -242,8 +242,14 @@ export default function ExpertsPage() {
                                         Expert certifié en LSF avec plus de 5 ans d'expérience dans l'interprétation professionnelle.
                                     </p>
 
-                                    {/* Actions */}
                                     <div className="flex gap-3">
+                                        <Link
+                                            href={`/dashboard/user/messages?expertId=${expert.id}`}
+                                            className="p-3 bg-indigo-50 text-indigo-900 rounded-xl hover:bg-indigo-100 transition-colors"
+                                            title="Envoyer un message"
+                                        >
+                                            <HandWaving size={20} weight="duotone" />
+                                        </Link>
                                         <Link
                                             href={`/experts/${expert.id}`}
                                             className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-3 text-sm font-semibold text-indigo-900 bg-indigo-50 hover:bg-indigo-100 rounded-xl transition-colors"
@@ -268,7 +274,7 @@ export default function ExpertsPage() {
 
                 {/* Empty State (if no experts) */}
                 {!loading && experts.length === 0 && displayExperts.length === 0 && (
-                    <motion.div 
+                    <motion.div
                         className="py-20 text-center"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}

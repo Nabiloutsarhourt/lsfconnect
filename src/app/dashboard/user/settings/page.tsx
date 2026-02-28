@@ -22,6 +22,9 @@ export default function UserSettingsPage() {
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
+    const [notifications, setNotifications] = useState(true);
+    const [studentMode, setStudentMode] = useState(false);
+    const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
         async function fetchProfile() {
@@ -37,12 +40,52 @@ export default function UserSettingsPage() {
                     setProfile(data);
                     setFullName(data.full_name || "");
                     setEmail(data.email || "");
+                    setNotifications(data.notification_enabled ?? true);
+                    setStudentMode(data.student_mode ?? false);
                 }
             }
             setLoading(false);
         }
         fetchProfile();
     }, [supabase]);
+
+    const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        setUploading(true);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+
+        const fileExt = file.name.split('.').pop();
+        const filePath = `${user.id}-${Math.random()}.${fileExt}`;
+
+        try {
+            const { error: uploadError } = await supabase.storage
+                .from('profiles')
+                .upload(filePath, file);
+
+            if (uploadError) throw uploadError;
+
+            const { data: { publicUrl } } = supabase.storage
+                .from('profiles')
+                .getPublicUrl(filePath);
+
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ avatar_url: publicUrl })
+                .eq('id', user.id);
+
+            if (updateError) throw updateError;
+
+            setProfile({ ...profile, avatar_url: publicUrl });
+            alert("Photo de profil mise à jour !");
+        } catch (error: any) {
+            alert("Erreur lors de l'upload: " + error.message);
+        } finally {
+            setUploading(false);
+        }
+    };
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,6 +96,8 @@ export default function UserSettingsPage() {
                 .from("profiles")
                 .update({
                     full_name: fullName,
+                    notification_enabled: notifications,
+                    student_mode: studentMode,
                 })
                 .eq("id", user.id);
 
@@ -89,13 +134,28 @@ export default function UserSettingsPage() {
                     <Card className="rounded-[3rem] border-none shadow-2xl bg-white overflow-hidden p-8 flex flex-col items-center text-center group">
                         <div className="relative mb-6">
                             <div className="w-32 h-32 rounded-[2.5rem] bg-slate-100 flex items-center justify-center text-slate-400 font-black text-4xl overflow-hidden border-4 border-white shadow-2xl transition-transform group-hover:scale-105 duration-500">
-                                {profile?.avatar_url ? (
+                                {uploading ? (
+                                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                                ) : profile?.avatar_url ? (
                                     <img src={profile.avatar_url} className="w-full h-full object-cover" />
                                 ) : (
                                     fullName?.charAt(0) || email?.charAt(0)
                                 )}
                             </div>
-                            <Button size="icon" className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-slate-900 shadow-xl hover:bg-primary transition-colors">
+                            <input
+                                type="file"
+                                id="avatar-upload"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={handleAvatarUpload}
+                                disabled={uploading}
+                            />
+                            <Button
+                                size="icon"
+                                className="absolute -bottom-2 -right-2 h-10 w-10 rounded-xl bg-slate-900 shadow-xl hover:bg-primary transition-colors"
+                                onClick={() => document.getElementById('avatar-upload')?.click()}
+                                disabled={uploading}
+                            >
                                 <Camera className="h-4 w-4" />
                             </Button>
                         </div>
@@ -163,23 +223,57 @@ export default function UserSettingsPage() {
                                         <h3 className="font-black text-slate-900 uppercase text-sm">Notifications Email</h3>
                                         <p className="text-[10px] font-bold text-slate-400 italic uppercase">Recevoir des alertes pour les nouveaux cours</p>
                                     </div>
-                                    <div className="w-12 h-6 bg-primary rounded-full relative shadow-inner">
-                                        <div className="absolute right-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
-                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setNotifications(!notifications)}
+                                        className={cn(
+                                            "w-12 h-6 rounded-full relative shadow-inner transition-colors",
+                                            notifications ? "bg-primary" : "bg-slate-200"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all",
+                                            notifications ? "right-1" : "left-1"
+                                        )} />
+                                    </button>
                                 </div>
                                 <div className="flex items-center justify-between">
                                     <div className="space-y-1">
                                         <h3 className="font-black text-slate-900 uppercase text-sm">Mode Étudiant</h3>
                                         <p className="text-[10px] font-bold text-slate-400 italic uppercase">Afficher les statistiques avancées</p>
                                     </div>
-                                    <div className="w-12 h-6 bg-slate-100 rounded-full relative shadow-inner">
-                                        <div className="absolute left-1 top-1 w-4 h-4 bg-white rounded-full shadow-sm" />
-                                    </div>
+                                    <button
+                                        type="button"
+                                        onClick={() => setStudentMode(!studentMode)}
+                                        className={cn(
+                                            "w-12 h-6 rounded-full relative shadow-inner transition-colors",
+                                            studentMode ? "bg-primary" : "bg-slate-200"
+                                        )}
+                                    >
+                                        <div className={cn(
+                                            "absolute top-1 w-4 h-4 bg-white rounded-full shadow-sm transition-all",
+                                            studentMode ? "right-1" : "left-1"
+                                        )} />
+                                    </button>
                                 </div>
                             </div>
 
                             <div className="pt-8 flex items-center justify-between">
-                                <button type="button" className="text-xs font-bold text-red-500 hover:text-red-600 transition-colors uppercase tracking-widest flex items-center gap-2">
+                                <button
+                                    type="button"
+                                    onClick={async () => {
+                                        if (confirm("Êtes-vous sûr de vouloir supprimer votre compte ? Cette action est irréversible.")) {
+                                            const { error } = await supabase.rpc('delete_user');
+                                            if (error) {
+                                                alert("Erreur lors de la suppression du compte: " + error.message);
+                                            } else {
+                                                await supabase.auth.signOut();
+                                                window.location.href = "/";
+                                            }
+                                        }
+                                    }}
+                                    className="text-xs font-bold text-red-500 hover:text-red-600 transition-colors uppercase tracking-widest flex items-center gap-2"
+                                >
                                     <Trash2 className="h-4 w-4" />
                                     Supprimer mon compte
                                 </button>

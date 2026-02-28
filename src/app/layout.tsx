@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
 import { Toaster } from "sonner";
 import { LSFBuddy } from "@/components/ai/LSFBuddy";
 import { CookieBanner } from "@/components/gdpr/CookieBanner";
@@ -19,13 +20,14 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "LSFCONNECT - Trouvez votre expert en Langue des Signes Française",
-  description: "Plateforme SaaS d'élite pour l'apprentissage de la LSF et la mise en relation avec des experts (médical, juridique, social).",
+  title: "LSFCONNECT | Formation LSF & Interprétation Professionnelle",
+  description: "La plateforme SaaS leader pour maîtriser la Langue des Signes Française. Formations certifiantes (Médical, Juridique, Social) et mise en relation avec des experts LSF.",
+  keywords: ["LSF", "Langue des Signes Française", "Formation LSF", "Interprète LSF", "Accessibilité", "E-learning LSF", "LSF Médical", "LSF Juridique"],
   manifest: "/manifest.json",
   themeColor: "#E11D48",
   openGraph: {
-    title: "LSFCONNECT | Expertise & Formation LSF",
-    description: "Rejoignez la plateforme leader pour maîtriser la Langue des Signes Française.",
+    title: "LSFCONNECT | L'Expertise LSF à portée de main",
+    description: "Devenez expert en LSF ou trouvez un interprète certifié pour vos besoins professionnels.",
     url: "https://lsfconnect.fr",
     siteName: "LSFCONNECT",
     locale: "fr_FR",
@@ -33,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LSFCONNECT | Expertise LSF",
-    description: "Trouvez votre expert LSF en quelques clics.",
+    title: "LSFCONNECT | Le Futur de l'Inclusion LSF",
+    description: "Apprenez la LSF avec des pros. Plateforme certifiante et innovante.",
   },
 };
 
@@ -52,18 +54,7 @@ export default function RootLayout({
         <main className="flex-1">
           {children}
         </main>
-        <footer className="border-t border-stone-200 bg-stone-50">
-          <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-between gap-4 py-8 md:h-24 md:flex-row">
-            <p className="text-balance text-center text-sm leading-loose text-stone-600 md:text-left font-medium">
-              &copy; 2026 LSFCONNECT. Tous droits réservés.
-            </p>
-            <div className="flex items-center gap-6 text-sm text-stone-500">
-              <a href="#" className="hover:text-indigo-900 transition-colors">Confidentialité</a>
-              <a href="#" className="hover:text-indigo-900 transition-colors">CGU</a>
-              <a href="#" className="hover:text-indigo-900 transition-colors">Contact</a>
-            </div>
-          </div>
-        </footer>
+        <Footer />
         <Toaster position="top-center" richColors />
         <LSFBuddy />
         <CookieBanner />

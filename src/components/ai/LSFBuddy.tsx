@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import {
     MessageCircle, X, Send,
     Sparkles, Loader2, Bot,
@@ -17,12 +18,16 @@ interface Message {
 
 export function LSFBuddy() {
     const [isOpen, setIsOpen] = useState(false);
+    const pathname = usePathname();
     const [messages, setMessages] = useState<Message[]>([
         { role: 'assistant', content: "Bonjour ! Je suis LSF Buddy, votre assistant théorique. Comment puis-je vous aider dans votre apprentissage de la LSF aujourd'hui ?" }
     ]);
     const [input, setInput] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    // Context detection
+    const isAtCourse = pathname.includes('/courses/');
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -42,7 +47,13 @@ export function LSFBuddy() {
             const response = await fetch('/api/ai/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ messages: [...messages, userMessage] }),
+                body: JSON.stringify({
+                    messages: [...messages, userMessage],
+                    context: {
+                        path: pathname,
+                        isLearning: isAtCourse
+                    }
+                }),
             });
 
             if (!response.ok) throw new Error("Erreur de communication");
