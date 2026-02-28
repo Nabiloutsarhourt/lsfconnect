@@ -2,88 +2,133 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Hand, User, Menu, X } from "lucide-react";
-import { useState } from "react";
+import { List, X, HandWaving, User, CaretRight } from "@phosphor-icons/react";
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export function Header() {
     const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 20);
+        };
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-            <div className="container flex h-16 items-center justify-between">
-                <div className="flex items-center gap-2">
-                    <Link href="/" className="flex items-center space-x-2">
-                        <Hand className="h-6 w-6 text-primary" aria-hidden="true" />
-                        <span className="inline-block font-bold text-xl tracking-tight">
-                            LSF<span className="text-primary">CONNECT</span>
+        <header
+            className={cn(
+                "sticky top-0 z-50 w-full transition-all duration-300",
+                scrolled
+                    ? "bg-white/95 backdrop-blur-xl border-b border-stone-200 shadow-sm"
+                    : "bg-transparent"
+            )}
+        >
+            <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex h-20 items-center justify-between">
+                <div className="flex items-center gap-3">
+                    <Link href="/" className="flex items-center gap-2 group" data-testid="logo-link">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-900 flex items-center justify-center group-hover:scale-105 transition-transform">
+                            <HandWaving size={24} weight="duotone" className="text-amber-400" />
+                        </div>
+                        <span className="font-heading font-bold text-xl tracking-tight text-slate-900">
+                            LSF<span className="text-indigo-900">CONNECT</span>
                         </span>
                     </Link>
                 </div>
 
                 {/* Desktop Navigation */}
-                <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                    <Link href="/experts" data-testid="nav-experts-link" className="transition-colors hover:text-primary">
-                        Trouver un Expert
-                    </Link>
-                    <Link href="/how-it-works" data-testid="nav-how-it-works-link" className="transition-colors hover:text-primary">
-                        Comment ça marche
-                    </Link>
-                    <Link href="/pricing" data-testid="nav-pricing-link" className="transition-colors hover:text-primary">
-                        Tarifs
-                    </Link>
+                <nav className="hidden md:flex items-center gap-1">
+                    {[
+                        { href: "/experts", label: "Trouver un Expert", testId: "nav-experts-link" },
+                        { href: "/how-it-works", label: "Comment ça marche", testId: "nav-how-it-works-link" },
+                        { href: "/pricing", label: "Tarifs", testId: "nav-pricing-link" },
+                    ].map((link) => (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            data-testid={link.testId}
+                            className="px-4 py-2 text-sm font-medium text-stone-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors"
+                        >
+                            {link.label}
+                        </Link>
+                    ))}
                 </nav>
 
-                <div className="hidden md:flex items-center gap-4">
+                <div className="hidden md:flex items-center gap-3">
                     <Link
                         href="/login"
                         data-testid="nav-login-link"
-                        className="text-sm font-medium transition-colors hover:text-primary"
+                        className="px-5 py-2.5 text-sm font-semibold text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors"
                     >
                         Connexion
                     </Link>
                     <Link
                         href="/register"
                         data-testid="nav-register-link"
-                        className="inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
+                        className="inline-flex items-center gap-2 px-6 py-2.5 text-sm font-semibold text-white bg-indigo-900 hover:bg-indigo-800 rounded-full shadow-lg shadow-indigo-900/20 transition-all hover:shadow-xl active:scale-95"
                     >
                         S'inscrire
+                        <CaretRight size={16} weight="bold" />
                     </Link>
                 </div>
 
                 {/* Mobile Menu Button */}
                 <button
-                    className="inline-flex items-center justify-center rounded-md p-2 md:hidden"
+                    className="inline-flex items-center justify-center w-10 h-10 rounded-xl md:hidden hover:bg-stone-100 transition-colors"
                     onClick={() => setIsOpen(!isOpen)}
                     aria-expanded={isOpen}
                     aria-label="Toggle menu"
                 >
-                    {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                    {isOpen ? <X size={24} weight="bold" /> : <List size={24} weight="bold" />}
                 </button>
             </div>
 
             {/* Mobile Navigation */}
-            {isOpen && (
-                <div className="container md:hidden pb-4 pb-6 border-b bg-background">
-                    <nav className="flex flex-col gap-4 text-sm font-medium">
-                        <Link href="/experts" onClick={() => setIsOpen(false)}>
-                            Trouver un Expert
-                        </Link>
-                        <Link href="/how-it-works" onClick={() => setIsOpen(false)}>
-                            Comment ça marche
-                        </Link>
-                        <Link href="/pricing" onClick={() => setIsOpen(false)}>
-                            Tarifs
-                        </Link>
-                        <hr />
-                        <Link href="/login" onClick={() => setIsOpen(false)}>
-                            Connexion
-                        </Link>
-                        <Link href="/register" className="text-primary font-bold" onClick={() => setIsOpen(false)}>
-                            S'inscrire
-                        </Link>
-                    </nav>
-                </div>
-            )}
+            <AnimatePresence>
+                {isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="md:hidden bg-white border-t border-stone-100 overflow-hidden"
+                    >
+                        <nav className="container max-w-7xl mx-auto px-4 py-6 flex flex-col gap-2">
+                            {[
+                                { href: "/experts", label: "Trouver un Expert" },
+                                { href: "/how-it-works", label: "Comment ça marche" },
+                                { href: "/pricing", label: "Tarifs" },
+                            ].map((link) => (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    onClick={() => setIsOpen(false)}
+                                    className="px-4 py-3 text-base font-medium text-stone-700 hover:text-indigo-900 hover:bg-indigo-50 rounded-xl transition-colors"
+                                >
+                                    {link.label}
+                                </Link>
+                            ))}
+                            <hr className="my-3 border-stone-100" />
+                            <Link
+                                href="/login"
+                                onClick={() => setIsOpen(false)}
+                                className="px-4 py-3 text-base font-medium text-stone-700 hover:bg-stone-50 rounded-xl transition-colors"
+                            >
+                                Connexion
+                            </Link>
+                            <Link
+                                href="/register"
+                                onClick={() => setIsOpen(false)}
+                                className="px-4 py-3 text-base font-semibold text-white bg-indigo-900 rounded-xl text-center mt-2"
+                            >
+                                S'inscrire gratuitement
+                            </Link>
+                        </nav>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </header>
     );
 }
