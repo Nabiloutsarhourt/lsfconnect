@@ -5,17 +5,19 @@ import Link from "next/link";
 import {
     LayoutDashboard, GraduationCap, Trophy,
     BarChart3, MessageSquare, Settings,
-    LogOut, ChevronRight, Library
+    LogOut, ChevronRight, Library, Video
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
 const sidebarLinks = [
+    { name: "Vue d'ensemble", href: "/dashboard/user", icon: LayoutDashboard },
     { name: "Mes Cours", href: "/dashboard/user/courses", icon: GraduationCap },
+    { name: "Classes Live", href: "/dashboard/user/live", icon: Video },
     { name: "Analytiques", href: "/dashboard/user/analytics", icon: BarChart3 },
     { name: "Certificats", href: "/dashboard/user/certificates", icon: Trophy },
-    { name: "Forum Communautaire", href: "/dashboard/user/forum", icon: Library },
-    { name: "Messages", href: "/dashboard/user/messages", icon: LayoutDashboard },
+    { name: "Forum", href: "/dashboard/user/forum", icon: Library },
+    { name: "Messages", href: "/dashboard/user/messages", icon: MessageSquare },
     { name: "Paramètres", href: "/dashboard/user/settings", icon: Settings },
 ];
 

@@ -3,6 +3,8 @@ import { Outfit, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Toaster } from "sonner";
+import { LSFBuddy } from "@/components/ai/LSFBuddy";
+import { CookieBanner } from "@/components/gdpr/CookieBanner";
 
 const outfit = Outfit({
   variable: "--font-outfit",
@@ -18,7 +20,22 @@ const plusJakarta = Plus_Jakarta_Sans({
 
 export const metadata: Metadata = {
   title: "LSFCONNECT - Trouvez votre expert en Langue des Signes Française",
-  description: "Plateforme de réservation d'interprètes et d'experts LSF en temps réel pour tous vos besoins (médical, juridique, social).",
+  description: "Plateforme SaaS d'élite pour l'apprentissage de la LSF et la mise en relation avec des experts (médical, juridique, social).",
+  manifest: "/manifest.json",
+  themeColor: "#E11D48",
+  openGraph: {
+    title: "LSFCONNECT | Expertise & Formation LSF",
+    description: "Rejoignez la plateforme leader pour maîtriser la Langue des Signes Française.",
+    url: "https://lsfconnect.fr",
+    siteName: "LSFCONNECT",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "LSFCONNECT | Expertise LSF",
+    description: "Trouvez votre expert LSF en quelques clics.",
+  },
 };
 
 export default function RootLayout({
@@ -48,6 +65,8 @@ export default function RootLayout({
           </div>
         </footer>
         <Toaster position="top-center" richColors />
+        <LSFBuddy />
+        <CookieBanner />
       </body>
     </html>
   );

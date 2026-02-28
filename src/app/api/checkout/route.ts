@@ -33,8 +33,8 @@ export async function POST(req: Request) {
                 },
             ],
             mode: 'payment',
-            success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/booking/success?expert_id=${expertId}&amount=${amount}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/experts/${expertId}`,
+            success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?expert_id=${expertId}&amount=${amount}`,
+            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/experts/${expertId}`,
             metadata: {
                 client_id: user.id,
                 expert_id: expertId,

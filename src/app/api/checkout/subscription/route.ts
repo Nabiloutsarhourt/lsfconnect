@@ -54,8 +54,8 @@ export async function POST(req: Request) {
                 },
             ],
             mode: "subscription",
-            success_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/dashboard/user?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'}/pricing`,
+            success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/user?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/pricing`,
             subscription_data: {
                 metadata: {
                     supabaseUUID: user.id,

@@ -78,10 +78,12 @@ export default function ForumPage() {
                     </h1>
                 </div>
 
-                <Button className="h-16 rounded-[2rem] px-8 bg-slate-900 shadow-2xl shadow-slate-900/20 font-black uppercase tracking-widest text-xs gap-3 hover:-translate-y-1 transition-all">
-                    <Plus className="h-5 w-5" />
-                    Nouvelle Discussion
-                </Button>
+                <Link href="/dashboard/user/forum/new">
+                    <Button className="h-16 rounded-[2rem] px-8 bg-slate-900 shadow-2xl shadow-slate-900/20 font-black uppercase tracking-widest text-xs gap-3 hover:-translate-y-1 transition-all">
+                        <Plus className="h-5 w-5" />
+                        Nouvelle Discussion
+                    </Button>
+                </Link>
             </div>
 
             {/* Categories Grid */}

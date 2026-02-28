@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { List, X, HandWaving, User, CaretRight } from "@phosphor-icons/react";
+import { List, X, HandWaving, User, CaretRight, GraduationCap, Activity } from "@phosphor-icons/react";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { NotificationCenter } from "./NotificationCenter";
+import { Button } from "@/components/ui/button";
 
 export function Header() {
     const [isOpen, setIsOpen] = useState(false);
@@ -45,6 +47,7 @@ export function Header() {
                         { href: "/experts", label: "Trouver un Expert", testId: "nav-experts-link" },
                         { href: "/how-it-works", label: "Comment ça marche", testId: "nav-how-it-works-link" },
                         { href: "/pricing", label: "Tarifs", testId: "nav-pricing-link" },
+                        { href: "/dashboard/user", label: "Tableau de Bord", testId: "nav-dashboard-link" },
                     ].map((link) => (
                         <Link
                             key={link.href}
@@ -55,9 +58,18 @@ export function Header() {
                             {link.label}
                         </Link>
                     ))}
+                    <Link href="/dashboard/admin/grading" className="px-4 py-2 text-sm font-medium text-stone-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors flex items-center gap-2">
+                        <GraduationCap size={16} weight="duotone" />
+                        Correction
+                    </Link>
+                    <Link href="/dashboard/admin/logs" className="px-4 py-2 text-sm font-medium text-stone-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-full transition-colors flex items-center gap-2">
+                        <Activity size={16} weight="duotone" />
+                        Audit
+                    </Link>
                 </nav>
 
                 <div className="hidden md:flex items-center gap-3">
+                    <NotificationCenter />
                     <Link
                         href="/login"
                         data-testid="nav-login-link"
@@ -129,6 +141,6 @@ export function Header() {
                     </motion.div>
                 )}
             </AnimatePresence>
-        </header>
+        </header >
     );
 }

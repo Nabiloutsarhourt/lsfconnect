@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { getSubscriptionStatus } from "@/lib/subscription";
+import { LSFVideoPlayer } from "@/components/ui-custom/LSFVideoPlayer";
 
 export default function LessonViewerPage() {
     const { id: courseId, lessonId } = useParams();
@@ -189,18 +190,16 @@ export default function LessonViewerPage() {
                 </div>
 
                 {/* Video Player */}
-                <div className="flex-1 bg-black relative overflow-hidden group">
+                <div className="flex-1 bg-slate-950 relative overflow-hidden group flex flex-col items-center justify-center p-4">
                     {lesson.video_url ? (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            {/* Placeholder for video player - In production use a player library */}
-                            <video
-                                className="w-full h-full object-contain"
-                                controls
-                                src={lesson.video_url}
-                            />
-                        </div>
+                        <LSFVideoPlayer
+                            src={lesson.video_url}
+                            title={lesson.title}
+                            hasLSFInterpretation={true}
+                            className="max-h-full w-auto max-w-full aspect-video shadow-2xl"
+                        />
                     ) : (
-                        <div className="absolute inset-0 flex items-center justify-center bg-slate-900 border-4 border-dashed border-slate-800 m-8 rounded-[2rem]">
+                        <div className="w-full h-full flex items-center justify-center bg-slate-900 border-4 border-dashed border-slate-800 rounded-[2rem]">
                             <div className="text-center space-y-4">
                                 <div className="w-20 h-20 bg-slate-800 rounded-3xl flex items-center justify-center mx-auto border border-slate-700">
                                     <Video className="h-10 w-10 text-slate-500" />
@@ -212,20 +211,55 @@ export default function LessonViewerPage() {
                 </div>
 
                 {/* Content Tabs / Info */}
-                <div className="p-8 border-t border-slate-100 bg-slate-50/50">
-                    <div className="flex items-start justify-between gap-8">
-                        <div className="flex-1 space-y-4">
-                            <h2 className="text-lg font-black text-slate-900 uppercase">À propos de cette leçon</h2>
-                            <p className="text-slate-500 text-sm font-medium leading-relaxed italic max-w-3xl">
-                                {lesson.content || "Suivez attentivement cette leçon vidéo pour maîtriser les concepts clés. N'oubliez pas de télécharger les ressources PDF si disponibles."}
-                            </p>
+                <div className="p-8 border-t border-slate-100 bg-white">
+                    <div className="flex flex-col md:flex-row items-start justify-between gap-12">
+                        <div className="flex-1 space-y-8">
+                            <div className="space-y-4">
+                                <div className="flex items-center gap-2 text-primary">
+                                    <BookOpen className="h-5 w-5" />
+                                    <h2 className="text-sm font-black uppercase tracking-widest">Guide d'Apprentissage</h2>
+                                </div>
+                                <p className="text-slate-600 text-lg font-medium leading-relaxed italic max-w-3xl">
+                                    {lesson.content || "Suivez attentivement cette leçon vidéo pour maîtriser les concepts clés de ce module. Prenez le temps d'observer chaque signe et utilisez les contrôles de vitesse pour un apprentissage optimal."}
+                                </p>
+                            </div>
+
+                            {/* Resource Section */}
+                            <div className="p-8 rounded-[2rem] bg-slate-50 border border-slate-100 space-y-6">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-white rounded-lg shadow-sm">
+                                            <FileText className="h-4 w-4 text-slate-400" />
+                                        </div>
+                                        <h3 className="text-xs font-black uppercase tracking-widest text-slate-900">Matériel de cours</h3>
+                                    </div>
+                                    <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest italic">1.2 MB . PDF</span>
+                                </div>
+
+                                <p className="text-xs text-slate-500 font-medium italic">
+                                    Téléchargez le support de cours complet incluant le lexique illustré et les schémas de configuration manuelle.
+                                </p>
+
+                                <div className="flex gap-4">
+                                    {lesson.pdf_url ? (
+                                        <Button asChild variant="outline" className="h-12 rounded-xl bg-white border-slate-200 font-black uppercase tracking-widest text-[9px] gap-2 px-6 shadow-sm hover:border-primary hover:text-primary transition-all">
+                                            <a href={lesson.pdf_url} download target="_blank" rel="noopener noreferrer">
+                                                <Download className="h-4 w-4" />
+                                                Télécharger le PDF
+                                            </a>
+                                        </Button>
+                                    ) : (
+                                        <Button disabled variant="outline" className="h-12 rounded-xl bg-white border-slate-200 opacity-50 font-black uppercase tracking-widest text-[9px] gap-2 px-6">
+                                            <Download className="h-4 w-4" />
+                                            PDF non disponible
+                                        </Button>
+                                    )}
+                                    <Button variant="ghost" className="h-12 rounded-xl font-black uppercase tracking-widest text-[9px] text-slate-400">
+                                        Voir en ligne
+                                    </Button>
+                                </div>
+                            </div>
                         </div>
-                        {lesson.pdf_url && (
-                            <Button variant="outline" className="h-14 rounded-2xl border-slate-200 bg-white shadow-sm font-black uppercase tracking-widest text-xs gap-3 px-8 flex-shrink-0">
-                                <Download className="h-5 w-5" />
-                                Support PDF
-                            </Button>
-                        )}
                     </div>
                 </div>
             </div>

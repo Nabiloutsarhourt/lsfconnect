@@ -280,3 +280,135 @@ INSERT INTO forum_categories (title, description, slug, icon, order_index) VALUE
 ('Domaine Social', 'Intervention en milieu scolaire, associatif et familial.', 'social', 'Users', 4),
 ('Entraide Étudiants', 'Besoin d''aide pour un exercice ou un cours ? C''est ici !', 'entraide', 'GraduationCap', 5)
 ON CONFLICT (slug) DO NOTHING;
+
+CREATE TABLE IF NOT EXISTS exercise_attempts (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  exercise_id UUID REFERENCES exercises(id) ON DELETE CASCADE,
+  score INT NOT NULL,
+  is_passed BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS case_study_submissions (
+  id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+  user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  exercise_id UUID REFERENCES exercises(id) ON DELETE CASCADE,
+  content TEXT NOT NULL,
+  grade INT,
+  feedback TEXT,
+  status TEXT CHECK (status IN ('pending', 'graded')) DEFAULT 'pending',
+  graded_by UUID REFERENCES profiles(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TRIGGER update_case_study_submissions_updated_at BEFORE UPDATE ON case_study_submissions FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+-- 14. PERFORMANCE INDEXES
+CREATE INDEX IF NOT EXISTS idx_profiles_email ON profiles(email);
+CREATE INDEX IF NOT EXISTS idx_courses_domain ON courses(domain);
+CREATE INDEX IF NOT EXISTS idx_user_progress_user ON user_progress(user_id);
+CREATE INDEX IF NOT EXISTS idx_user_progress_lesson ON user_progress(lesson_id);
+CREATE INDEX IF NOT EXISTS idx_exercise_attempts_user ON exercise_attempts(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_expert ON bookings(expert_id);
+CREATE INDEX IF NOT EXISTS idx_case_study_status ON case_study_submissions(status);
+
+-- 15. PHASE 6: LIVE VIRTUAL CLASSES & GAMIFICATION
+CREATE TABLE IF NOT EXISTS live_sessions (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    title TEXT NOT NULL,
+    description TEXT,
+    scheduled_at TIMESTAMPTZ NOT NULL,
+    duration_minutes INT DEFAULT 60,
+    instructor_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    course_id UUID REFERENCES courses(id) ON DELETE SET NULL,
+    meeting_id TEXT NOT NULL UNIQUE,
+    status TEXT CHECK (status IN ('scheduled', 'live', 'ended')) DEFAULT 'scheduled',
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS badges (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    name TEXT NOT NULL,
+    description TEXT,
+    icon_type TEXT NOT NULL,
+    criteria_type TEXT NOT NULL,
+    criteria_value INT DEFAULT 1,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS user_badges (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    user_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    badge_id UUID REFERENCES badges(id) ON DELETE CASCADE,
+    earned_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_id, badge_id)
+);
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS points INT DEFAULT 0;
+
+ALTER TABLE live_sessions ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Live sessions viewable by all" ON live_sessions FOR SELECT USING (true);
+ALTER TABLE badges ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Badges are public" ON badges FOR SELECT USING (true);
+ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "User badges viewable by all" ON user_badges FOR SELECT USING (true);
+
+-- 16. PHASE 7: REFERRAL SYSTEM
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS referral_code TEXT UNIQUE;
+
+CREATE OR REPLACE FUNCTION generate_referral_code() RETURNS TEXT AS $$
+DECLARE
+  chars TEXT := 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  result TEXT := '';
+  i INTEGER := 0;
+BEGIN
+  FOR i IN 1..8 LOOP
+    result := result || substr(chars, floor(random() * length(chars) + 1)::integer, 1);
+  END LOOP;
+  RETURN result;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION set_referral_code() RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.referral_code IS NULL THEN
+    NEW.referral_code := generate_referral_code();
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DO $$ 
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = 'tr_set_referral_code') THEN
+    CREATE TRIGGER tr_set_referral_code
+    BEFORE INSERT ON profiles
+    FOR EACH ROW EXECUTE FUNCTION set_referral_code();
+  END IF;
+END $$;
+
+CREATE TABLE IF NOT EXISTS referrals (
+    id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
+    referrer_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    referred_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+    reward_awarded BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(referred_id)
+);
+
+ALTER TABLE referrals ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Users can see their own referrals" ON referrals FOR SELECT USING (
+  auth.uid() = referrer_id OR auth.uid() = referred_id
+);
+
+-- Seed Phase 6 Badges
+INSERT INTO badges (name, description, icon_type, criteria_type) VALUES
+('Pionnier LSF', 'Première connexion à la plateforme.', 'Sparkles', 'login'),
+('Étudiant Assidu', 'Complétez votre premier cours.', 'GraduationCap', 'course_completed'),
+('Expert Judiciaire', 'Validez une étude de cas judiciaire.', 'Gavel', 'case_study_completed')
+ON CONFLICT DO NOTHING;
+
+-- Backfill codes
+UPDATE profiles SET referral_code = generate_referral_code() WHERE referral_code IS NULL;

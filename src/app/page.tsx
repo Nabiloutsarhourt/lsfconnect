@@ -34,13 +34,13 @@ export default function Home() {
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left Content */}
-            <motion.div 
+            <motion.div
               className="lg:col-span-6 flex flex-col gap-8"
               initial="initial"
               animate="animate"
               variants={staggerContainer}
             >
-              <motion.div 
+              <motion.div
                 variants={fadeInUp}
                 className="inline-flex items-center gap-2 w-fit rounded-full border border-indigo-200 bg-white/80 backdrop-blur px-4 py-2 text-xs font-semibold text-indigo-900 shadow-sm"
               >
@@ -48,7 +48,7 @@ export default function Home() {
                 L'inclusion au bout des doigts
               </motion.div>
 
-              <motion.h1 
+              <motion.h1
                 variants={fadeInUp}
                 className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-slate-900"
               >
@@ -58,14 +58,14 @@ export default function Home() {
                 Entre Vos Mains.
               </motion.h1>
 
-              <motion.p 
+              <motion.p
                 variants={fadeInUp}
                 className="text-lg md:text-xl text-stone-600 max-w-xl leading-relaxed"
               >
                 Réservez un expert certifié ou maîtrisez la Langue des Signes Française avec la première plateforme de SaaS e-learning tout-en-un.
               </motion.p>
 
-              <motion.div 
+              <motion.div
                 variants={fadeInUp}
                 className="flex flex-wrap gap-4 pt-2"
               >
@@ -87,7 +87,7 @@ export default function Home() {
                 </Link>
               </motion.div>
 
-              <motion.div 
+              <motion.div
                 variants={fadeInUp}
                 className="flex items-center gap-6 pt-6 border-t border-stone-200"
               >
@@ -121,7 +121,7 @@ export default function Home() {
             </motion.div>
 
             {/* Right Content - Video */}
-            <motion.div 
+            <motion.div
               className="lg:col-span-6 relative"
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -151,7 +151,7 @@ export default function Home() {
       {/* Trust Domains */}
       <section className="py-20 bg-white border-y border-stone-100">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="flex flex-col items-center mb-16 text-center"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -166,18 +166,15 @@ export default function Home() {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
-              { name: "Juridique", icon: Gavel, color: "bg-blue-600", desc: "Tribunaux, avocats" },
-              { name: "Médical", icon: Stethoscope, color: "bg-rose-500", desc: "Hôpitaux, cliniques" },
-              { name: "Entreprise", icon: Briefcase, color: "bg-indigo-900", desc: "Réunions, RH" },
-              { name: "Social", icon: Heart, color: "bg-emerald-600", desc: "Famille, éducation" },
+              { name: "Judiciaire", icon: Gavel, color: "bg-blue-600", desc: "Tribunaux, avocats", slug: "judicial" },
+              { name: "Médical", icon: Stethoscope, color: "bg-rose-500", desc: "Hôpitaux, cliniques", slug: "medical" },
+              { name: "Commercial", icon: Briefcase, color: "bg-indigo-900", desc: "Réunions, RH", slug: "commercial" },
+              { name: "Social", icon: Heart, color: "bg-emerald-600", desc: "Famille, éducation", slug: "social" },
             ].map((domain, i) => (
-              <motion.div
+              <Link
                 key={i}
-                className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-stone-50 hover:bg-white hover:shadow-xl border border-transparent hover:border-stone-100 transition-all group cursor-default"
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                href={`/domains/${domain.slug}`}
+                className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-stone-50 hover:bg-white hover:shadow-xl border border-transparent hover:border-stone-100 transition-all group cursor-pointer"
               >
                 <div className={cn(
                   "w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110 group-hover:-rotate-3",
@@ -186,10 +183,10 @@ export default function Home() {
                   <domain.icon size={28} weight="duotone" />
                 </div>
                 <div className="text-center">
-                  <span className="text-base font-bold text-slate-900 block">{domain.name}</span>
+                  <span className="text-base font-bold text-slate-900 block group-hover:text-indigo-900 transition-colors">{domain.name}</span>
                   <span className="text-xs text-stone-500">{domain.desc}</span>
                 </div>
-              </motion.div>
+              </Link>
             ))}
           </div>
         </div>
@@ -197,7 +194,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="py-24 md:py-32 container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -239,15 +236,15 @@ export default function Home() {
               transition={{ duration: 0.5, delay: i * 0.15 }}
             >
               <div className="absolute top-0 left-0 right-0 h-1 bg-stone-100 group-hover:bg-indigo-600 rounded-t-3xl transition-colors" />
-              
+
               <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-900 group-hover:bg-indigo-900 group-hover:text-white transition-all mb-8">
                 <feature.icon size={28} weight="duotone" />
               </div>
-              
+
               <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">{feature.tag}</span>
               <h3 className="font-heading text-2xl font-bold text-slate-900 mt-2 mb-4">{feature.title}</h3>
               <p className="text-stone-600 leading-relaxed">{feature.description}</p>
-              
+
               <div className="mt-8 pt-6 border-t border-stone-100 flex justify-end">
                 <div className="p-2 rounded-xl bg-stone-50 text-stone-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-all">
                   <ArrowRight size={20} weight="bold" />
@@ -262,7 +259,7 @@ export default function Home() {
       <section className="py-20 bg-indigo-900 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/20 rounded-full blur-[150px] pointer-events-none" />
-        
+
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
             {[
@@ -293,7 +290,7 @@ export default function Home() {
       {/* Testimonials */}
       <section className="py-24 md:py-32 bg-stone-50/50">
         <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div 
+          <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -352,14 +349,14 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="relative">
                   <Quotes size={32} weight="fill" className="text-stone-100 absolute -top-2 -left-1" />
                   <p className="text-stone-600 leading-relaxed relative z-10 pl-4">
                     "{testimonial.content}"
                   </p>
                 </div>
-                
+
                 <div className="mt-6 pt-6 border-t border-stone-100 flex items-center justify-between">
                   <div className="flex items-center gap-1">
                     {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} weight="fill" className="text-amber-400" />)}
@@ -382,19 +379,19 @@ export default function Home() {
         >
           <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
           <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-400/20 rounded-full blur-[100px] pointer-events-none" />
-          
+
           <div className="relative z-10 flex flex-col items-center gap-8 max-w-3xl mx-auto">
             <HandWaving size={56} weight="duotone" className="text-amber-400" />
-            
+
             <h2 className="font-heading text-3xl md:text-5xl font-bold leading-tight">
               Prêt à Transformer Votre{" "}
               <span className="text-amber-400">Accessibilité ?</span>
             </h2>
-            
+
             <p className="text-lg md:text-xl text-indigo-200 max-w-2xl">
               Rejoignez la révolution de l'inclusion et accédez aux meilleurs interprètes de France.
             </p>
-            
+
             <div className="flex flex-wrap gap-4 justify-center pt-4">
               <Link
                 href="/register"
@@ -420,7 +417,7 @@ export default function Home() {
 function GraduationCap({ size, weight, className }: { size?: number; weight?: string; className?: string }) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 256 256" className={className}>
-      <path fill="currentColor" d="M251.76 88.94l-120-64a8 8 0 00-7.52 0l-120 64a8 8 0 000 14.12L32 117.87v48.42a15.91 15.91 0 004.06 10.65C49.16 191.53 78.51 216 128 216a130 130 0 0048-8.76V240a8 8 0 0016 0v-40.49a115.63 115.63 0 0027.94-22.57 15.91 15.91 0 004.06-10.65v-48.42l27.76-14.81a8 8 0 000-14.12zM128 200c-43.27 0-68.72-21.14-80-33.71V126.4l76.24 40.66a8 8 0 007.52 0L176 143.47v46.34c-12.6 5.88-28.31 10.19-48 10.19zm80-33.75a97.83 97.83 0 01-16 14.25V134.93l16-8.53zm-80-20.59L43.76 96 128 46.34 212.24 96z"/>
+      <path fill="currentColor" d="M251.76 88.94l-120-64a8 8 0 00-7.52 0l-120 64a8 8 0 000 14.12L32 117.87v48.42a15.91 15.91 0 004.06 10.65C49.16 191.53 78.51 216 128 216a130 130 0 0048-8.76V240a8 8 0 0016 0v-40.49a115.63 115.63 0 0027.94-22.57 15.91 15.91 0 004.06-10.65v-48.42l27.76-14.81a8 8 0 000-14.12zM128 200c-43.27 0-68.72-21.14-80-33.71V126.4l76.24 40.66a8 8 0 007.52 0L176 143.47v46.34c-12.6 5.88-28.31 10.19-48 10.19zm80-33.75a97.83 97.83 0 01-16 14.25V134.93l16-8.53zm-80-20.59L43.76 96 128 46.34 212.24 96z" />
     </svg>
   );
 }

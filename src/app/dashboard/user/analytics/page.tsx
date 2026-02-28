@@ -45,7 +45,7 @@ export default function UserAnalyticsPage() {
 
         // Fetch quiz results for skill radar
         const { data: attempts } = await supabase
-            .from("attempts")
+            .from("exercise_attempts")
             .select(`
                 score,
                 exercise:exercises(
