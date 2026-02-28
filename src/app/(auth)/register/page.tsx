@@ -5,8 +5,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { User, ShieldCheck, Loader2 } from "lucide-react";
+import { motion } from "framer-motion";
+import { User, ShieldCheck, CircleNotch, Envelope, Lock, UserCircle, ArrowRight, Info } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
@@ -52,108 +52,183 @@ export default function RegisterPage() {
     };
 
     return (
-        <div className="container flex min-h-[calc(100vh-4rem)] items-center justify-center py-12">
-            <Card className="w-full max-w-lg shadow-lg border-primary/10">
-                <CardHeader className="space-y-1 text-center">
-                    <CardTitle className="text-3xl font-bold tracking-tight">Créer un compte</CardTitle>
-                    <CardDescription className="text-muted-foreground">
-                        Rejoignez la communauté LSFCONNECT et commencez à échanger.
-                    </CardDescription>
-                </CardHeader>
-                <form onSubmit={handleRegister}>
-                    <CardContent className="grid gap-6">
+        <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center py-12 px-4 bg-stone-50/50">
+            <motion.div
+                className="w-full max-w-lg"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+            >
+                <div className="bg-white rounded-3xl shadow-2xl shadow-stone-200/50 border border-stone-100 overflow-hidden">
+                    {/* Header */}
+                    <div className="p-8 pb-6 text-center border-b border-stone-100 bg-gradient-to-b from-indigo-50/50 to-white">
+                        <h1 className="font-heading text-2xl font-bold text-slate-900" data-testid="register-page-title">
+                            Créer votre compte
+                        </h1>
+                        <p className="text-stone-500 text-sm mt-1">
+                            Rejoignez la communauté LSFCONNECT
+                        </p>
+                    </div>
+
+                    {/* Form */}
+                    <form onSubmit={handleRegister} className="p-8 space-y-6">
+                        {/* Role Selection */}
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 type="button"
                                 onClick={() => setRole("client")}
+                                data-testid="role-client-btn"
                                 className={cn(
-                                    "flex flex-col items-center justify-center gap-2 rounded-xl border-2 p-4 transition-all hover:bg-accent",
-                                    role === "client" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-muted"
+                                    "flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all",
+                                    role === "client"
+                                        ? "border-indigo-600 bg-indigo-50 ring-2 ring-indigo-600/20"
+                                        : "border-stone-200 hover:border-stone-300 hover:bg-stone-50"
                                 )}
                             >
-                                <User className={cn("h-8 w-8", role === "client" ? "text-primary" : "text-muted-foreground")} />
-                                <div className="text-sm font-bold">Client</div>
-                                <p className="text-[10px] text-muted-foreground text-center">Je cherche un expert LSF</p>
+                                <User
+                                    size={32}
+                                    weight="duotone"
+                                    className={cn(role === "client" ? "text-indigo-600" : "text-stone-400")}
+                                />
+                                <div className="text-center">
+                                    <div className={cn(
+                                        "text-sm font-bold",
+                                        role === "client" ? "text-indigo-900" : "text-slate-700"
+                                    )}>
+                                        Client
+                                    </div>
+                                    <p className="text-xs text-stone-500 mt-0.5">Je cherche un expert LSF</p>
+                                </div>
                             </button>
+                            
                             <button
                                 type="button"
                                 onClick={() => setRole("expert")}
+                                data-testid="role-expert-btn"
                                 className={cn(
-                                    "flex flex-col items-center justify-center gap-2 rounded-xl border-2 p-4 transition-all hover:bg-accent",
-                                    role === "expert" ? "border-primary bg-primary/5 ring-1 ring-primary" : "border-muted"
+                                    "flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all",
+                                    role === "expert"
+                                        ? "border-indigo-600 bg-indigo-50 ring-2 ring-indigo-600/20"
+                                        : "border-stone-200 hover:border-stone-300 hover:bg-stone-50"
                                 )}
                             >
-                                <ShieldCheck className={cn("h-8 w-8", role === "expert" ? "text-primary" : "text-muted-foreground")} />
-                                <div className="text-sm font-bold">Expert</div>
-                                <p className="text-[10px] text-muted-foreground text-center">Je suis un professionnel LSF</p>
+                                <ShieldCheck
+                                    size={32}
+                                    weight="duotone"
+                                    className={cn(role === "expert" ? "text-indigo-600" : "text-stone-400")}
+                                />
+                                <div className="text-center">
+                                    <div className={cn(
+                                        "text-sm font-bold",
+                                        role === "expert" ? "text-indigo-900" : "text-slate-700"
+                                    )}>
+                                        Expert
+                                    </div>
+                                    <p className="text-xs text-stone-500 mt-0.5">Je suis professionnel LSF</p>
+                                </div>
                             </button>
                         </div>
 
                         {error && (
-                            <div className="p-3 rounded-md bg-destructive/10 text-destructive text-sm font-medium border border-destructive/20 text-center">
+                            <div className="p-4 rounded-xl bg-red-50 text-red-600 text-sm font-medium border border-red-100 text-center">
                                 {error}
                             </div>
                         )}
 
-                        <div className="grid gap-2 text-left">
-                            <label className="text-sm font-semibold text-foreground/80" htmlFor="fullName">
+                        {/* Name Input */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700" htmlFor="fullName">
                                 Nom complet
                             </label>
-                            <input
-                                id="fullName"
-                                name="fullName"
-                                type="text"
-                                required
-                                placeholder="Jean Dupont"
-                                className="flex h-11 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                            />
-                        </div>
-                        <div className="grid gap-2 text-left">
-                            <label className="text-sm font-semibold text-foreground/80" htmlFor="email">
-                                Email
-                            </label>
-                            <input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                placeholder="m@example.com"
-                                className="flex h-11 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                            />
-                        </div>
-                        <div className="grid gap-2 text-left">
-                            <label className="text-sm font-semibold text-foreground/80" htmlFor="password">
-                                Mot de passe
-                            </label>
-                            <input
-                                id="password"
-                                name="password"
-                                type="password"
-                                required
-                                className="flex h-11 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                            />
+                            <div className="relative">
+                                <UserCircle size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+                                <input
+                                    id="fullName"
+                                    name="fullName"
+                                    type="text"
+                                    required
+                                    placeholder="Jean Dupont"
+                                    data-testid="register-name-input"
+                                    className="w-full pl-12 pr-4 h-12 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm transition-all"
+                                />
+                            </div>
                         </div>
 
+                        {/* Email Input */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700" htmlFor="email">
+                                Adresse email
+                            </label>
+                            <div className="relative">
+                                <Envelope size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+                                <input
+                                    id="email"
+                                    name="email"
+                                    type="email"
+                                    required
+                                    placeholder="vous@exemple.com"
+                                    data-testid="register-email-input"
+                                    className="w-full pl-12 pr-4 h-12 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Password Input */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700" htmlFor="password">
+                                Mot de passe
+                            </label>
+                            <div className="relative">
+                                <Lock size={20} className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" />
+                                <input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    required
+                                    data-testid="register-password-input"
+                                    className="w-full pl-12 pr-4 h-12 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm transition-all"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Expert Info Notice */}
                         {role === "expert" && (
-                            <div className="rounded-lg bg-blue-50/50 p-4 border border-blue-100 dark:bg-blue-900/10 dark:border-blue-800">
-                                <p className="text-xs text-blue-700 dark:text-blue-400 font-medium leading-relaxed">
-                                    <span className="font-bold">Info :</span> En tant qu'expert, vous devrez télécharger une vidéo de présentation LSF et vos certifications après l'inscription.
+                            <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-100">
+                                <Info size={20} className="text-amber-600 shrink-0 mt-0.5" />
+                                <p className="text-xs text-amber-800 leading-relaxed">
+                                    <span className="font-bold">Note :</span> En tant qu'expert, vous devrez télécharger une vidéo de présentation LSF et vos certifications après l'inscription pour validation.
                                 </p>
                             </div>
                         )}
 
-                        <Button type="submit" data-testid="register-submit-btn" className="w-full h-12 text-base font-bold" disabled={loading}>
-                            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Créer mon compte"}
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            data-testid="register-submit-btn"
+                            className="w-full h-12 rounded-xl bg-indigo-900 hover:bg-indigo-800 text-white font-semibold shadow-lg shadow-indigo-900/20 transition-all active:scale-[0.98]"
+                        >
+                            {loading ? (
+                                <CircleNotch size={20} className="animate-spin" />
+                            ) : (
+                                <>
+                                    Créer mon compte
+                                    <ArrowRight size={18} weight="bold" className="ml-2" />
+                                </>
+                            )}
                         </Button>
-                    </CardContent>
-                </form>
-                <CardFooter className="flex flex-wrap items-center justify-center gap-1 text-sm text-muted-foreground pb-8">
-                    Vous avez déjà un compte ?{" "}
-                    <Link href="/login" className="text-primary hover:underline font-bold transition-all">
-                        Se connecter
-                    </Link>
-                </CardFooter>
-            </Card>
+                    </form>
+
+                    {/* Footer */}
+                    <div className="px-8 pb-8 text-center">
+                        <p className="text-sm text-stone-500">
+                            Déjà inscrit ?{" "}
+                            <Link href="/login" className="text-indigo-600 hover:text-indigo-700 font-semibold">
+                                Se connecter
+                            </Link>
+                        </p>
+                    </div>
+                </div>
+            </motion.div>
         </div>
     );
 }
