@@ -111,7 +111,7 @@ export default function RegisterPage() {
                                     <p className="text-xs text-stone-500 mt-0.5">Je cherche un expert LSF</p>
                                 </div>
                             </button>
-                            
+
                             <button
                                 type="button"
                                 onClick={() => setRole("expert")}
@@ -165,7 +165,26 @@ export default function RegisterPage() {
                             </div>
                         </div>
 
-<<<<<<< HEAD
+                        {/* Domain Input */}
+                        <div className="space-y-2">
+                            <label className="text-sm font-semibold text-slate-700" htmlFor="domain">
+                                Domaine Principal LSF
+                            </label>
+                            <div className="relative">
+                                <select
+                                    id="domain"
+                                    name="domain"
+                                    required
+                                    className="w-full px-4 h-12 rounded-xl border border-stone-200 bg-stone-50 focus:bg-white focus:ring-2 focus:ring-indigo-600 focus:border-transparent text-sm transition-all appearance-none cursor-pointer"
+                                >
+                                    <option value="Judicial">⚖ Judiciaire</option>
+                                    <option value="Medical">🏥 Médical</option>
+                                    <option value="Commercial">🏢 Commercial</option>
+                                    <option value="Social">🤝 Social</option>
+                                </select>
+                            </div>
+                        </div>
+
                         {/* Email Input */}
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-slate-700" htmlFor="email">
@@ -202,27 +221,6 @@ export default function RegisterPage() {
                                 />
                             </div>
                         </div>
-
-                        {/* Expert Info Notice */}
-=======
-                        <div className="grid gap-2 text-left">
-                            <label className="text-sm font-semibold text-foreground/80" htmlFor="domain">
-                                Domaine Principal LSF
-                            </label>
-                            <select
-                                id="domain"
-                                name="domain"
-                                required
-                                className="flex h-11 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary appearance-none cursor-pointer"
-                            >
-                                <option value="Judicial">⚖ Judiciaire</option>
-                                <option value="Medical">🏥 Médical</option>
-                                <option value="Commercial">🏢 Commercial</option>
-                                <option value="Social">🤝 Social</option>
-                            </select>
-                        </div>
-
->>>>>>> 5b2187f (feat: implement forum navigation fix, LSM submission improvements, analytics data integrity, and GDPR cookie banner)
                         {role === "expert" && (
                             <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-100">
                                 <Info size={20} className="text-amber-600 shrink-0 mt-0.5" />

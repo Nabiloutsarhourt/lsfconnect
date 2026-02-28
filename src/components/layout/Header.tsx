@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { List, X, HandWaving, User, CaretRight, GraduationCap, Activity } from "@phosphor-icons/react";
+import { List, X, HandWaving, User, CaretRight, GraduationCap, ChartLineUp } from "@phosphor-icons/react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -95,7 +95,7 @@ export function Header() {
                         <>
                             <div className="w-px h-6 bg-slate-100 mx-2" />
                             <Link href="/dashboard/admin" className="px-4 py-2 text-sm font-black text-primary hover:bg-primary/5 rounded-full transition-all flex items-center gap-2 italic uppercase tracking-tighter">
-                                <Activity size={16} weight="duotone" />
+                                <ChartLineUp size={16} weight="duotone" />
                                 Admin
                             </Link>
                             <Link href="/dashboard/admin/grading" className="px-4 py-2 text-sm font-bold text-slate-600 hover:text-indigo-900 hover:bg-slate-50 rounded-full transition-all flex items-center gap-2">
