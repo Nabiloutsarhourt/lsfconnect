@@ -2,8 +2,11 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
-import { CheckCircle2, Zap, ShieldCheck, Globe, Star, ArrowRight, HandMetal } from "lucide-react";
+import { motion } from "framer-motion";
+import {
+  CheckCircle, Lightning, ShieldCheck, GlobeSimple,
+  Star, ArrowRight, HandWaving, Sparkle
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -20,7 +23,7 @@ const plans = [
         ],
         cta: "Commencer gratuitement",
         popular: false,
-        color: "slate"
+        href: "/register"
     },
     {
         name: "Pro",
@@ -36,7 +39,7 @@ const plans = [
         ],
         cta: "Passer à Pro",
         popular: true,
-        color: "primary"
+        href: "/register?plan=pro"
     },
     {
         name: "Entreprise",
@@ -52,7 +55,7 @@ const plans = [
         ],
         cta: "Contacter l'équipe",
         popular: false,
-        color: "blue"
+        href: "/contact"
     }
 ];
 
@@ -60,165 +63,232 @@ export default function PricingPage() {
     const [billingCycle, setBillingCycle] = useState<"monthly" | "annually">("monthly");
 
     return (
-        <div className="container py-20 space-y-20 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <div className="text-center space-y-6 max-w-3xl mx-auto">
-                <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-primary/5 border border-primary/10 text-primary text-[10px] font-black uppercase tracking-widest">
-                    <Zap className="h-3 w-3 fill-current" />
-                    Tarification Simple
-                </div>
-                <h1 className="text-4xl md:text-6xl font-black text-slate-900 tracking-tighter leading-tight italic">
-                    Investissez dans votre <span className="text-primary not-italic">Avenir LSF</span>
-                </h1>
-                <p className="text-xl text-slate-500 font-medium leading-relaxed italic max-w-2xl mx-auto">
-                    Des plans flexibles pour tous les besoins, de l'initiation personnelle à l'excellence professionnelle.
-                </p>
-
-                <div className="flex items-center justify-center pt-8">
-                    <div className="bg-slate-100 p-1 rounded-2xl flex items-center gap-1 border border-slate-200 shadow-inner">
-                        <button
-                            onClick={() => setBillingCycle("monthly")}
-                            className={cn(
-                                "px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all",
-                                billingCycle === "monthly" ? "bg-white text-slate-900 shadow-lg" : "text-slate-400 hover:text-slate-600"
-                            )}
-                        >
-                            Mensuel
-                        </button>
-                        <button
-                            onClick={() => setBillingCycle("annually")}
-                            className={cn(
-                                "px-6 py-2.5 rounded-xl font-black uppercase tracking-widest text-[10px] transition-all relative",
-                                billingCycle === "annually" ? "bg-white text-slate-900 shadow-lg" : "text-slate-400 hover:text-slate-600"
-                            )}
-                        >
-                            Annuel
-                            <span className="absolute -top-3 -right-3 px-2 py-0.5 rounded-full bg-green-500 text-[8px] text-white font-black animate-bounce shadow-lg shadow-green-200">
-                                -20%
-                            </span>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative pb-20">
-                {/* Glow effect */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-primary/5 rounded-[50%] blur-[120px] pointer-events-none" />
-
-                {plans.map((plan) => (
-                    <Card
-                        key={plan.name}
-                        className={cn(
-                            "relative group rounded-[3rem] border-none shadow-2xl transition-all duration-500 hover:-translate-y-4 flex flex-col h-full bg-white/80 backdrop-blur-xl",
-                            plan.popular ? "ring-4 ring-primary ring-opacity-10 scale-105 shadow-primary/20 bg-white" : "shadow-slate-200/50"
-                        )}
+        <div className="flex flex-col bg-stone-50/30">
+            {/* Hero Section */}
+            <section className="py-20 md:py-28 bg-white border-b border-stone-100">
+                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div 
+                        className="text-center space-y-6 max-w-3xl mx-auto"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
                     >
-                        {plan.popular && (
-                            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-6 py-2 rounded-full font-black uppercase tracking-[0.2em] text-[10px] shadow-xl shadow-primary/20">
-                                Plus Populaire
-                            </div>
-                        )}
-
-                        <CardHeader className="p-10 pb-6 text-center space-y-6">
-                            <div className="space-y-2">
-                                <span className={cn(
-                                    "text-[10px] font-black uppercase tracking-[0.3em]",
-                                    plan.color === "primary" ? "text-primary text-opacity-80" : "text-slate-400"
-                                )}>
-                                    Plan {plan.name}
-                                </span>
-                                <CardTitle className="text-3xl font-black text-slate-900 leading-none">
-                                    {plan.price === "Custom" ? "Sur Devis" : (
-                                        <div className="flex items-center justify-center gap-1">
-                                            <span className="text-sm self-start mt-1">€</span>
-                                            <span className="text-5xl tracking-tighter">{billingCycle === "annually" && plan.price !== "0" ? Math.floor(parseInt(plan.price) * 0.8) : plan.price}</span>
-                                            <span className="text-xs text-slate-400 italic">/mo</span>
-                                        </div>
-                                    )}
-                                </CardTitle>
-                            </div>
-                            <CardDescription className="text-sm font-medium text-slate-500 leading-relaxed italic">
-                                {plan.description}
-                            </CardDescription>
-                        </CardHeader>
-
-                        <CardContent className="p-10 pt-0 space-y-8 flex-grow">
-                            <div className="w-full h-px bg-slate-100" />
-                            <ul className="space-y-4">
-                                {plan.features.map((feature) => (
-                                    <li key={feature} className="flex items-start gap-4 text-sm font-medium text-slate-600 group/item">
-                                        <div className={cn(
-                                            "mt-0.5 p-0.5 rounded-full transition-colors",
-                                            plan.color === "primary" ? "bg-primary/10 text-primary" : "bg-slate-100 text-slate-400"
-                                        )}>
-                                            <CheckCircle2 className="h-4 w-4" />
-                                        </div>
-                                        <span className="group-hover/item:text-slate-900 transition-colors">{feature}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </CardContent>
-
-                        <CardFooter className="p-10 pt-0">
-                            <Button
-                                className={cn(
-                                    "w-full h-16 rounded-2xl font-black uppercase tracking-widest text-[10px] gap-3 shadow-xl transition-all",
-                                    plan.popular ? "shadow-primary/20" : "bg-slate-900 hover:bg-slate-800 text-white shadow-slate-200"
-                                )}
-                                asChild
-                            >
-                                <Link href={plan.price === "0" ? "/register" : "/api/checkout/subscription"}>
-                                    {plan.cta}
-                                    <ArrowRight className="h-4 w-4" />
-                                </Link>
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                ))}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 pt-20 border-t border-slate-100">
-                <div className="space-y-6">
-                    <h2 className="text-3xl font-black text-slate-900 tracking-tight leading-tight italic">
-                        Pourquoi s'abonner à <span className="text-primary not-italic underline decoration-slate-200 decoration-8 underline-offset-[-2px]">LSFCONNECT Pro ?</span>
-                    </h2>
-                    <p className="text-slate-500 font-medium leading-relaxed italic">
-                        Nous réinvestissons chaque abonnement dans la création de nouveaux cours et le support aux experts LSF indépendants.
-                    </p>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {[
-                        { title: "Sécurité", icon: ShieldCheck, desc: "Paiements 100% sécurisés par Stripe." },
-                        { title: "Liberté", icon: Star, desc: "Annulez votre abonnement à tout moment." },
-                        { title: "Impact", icon: Globe, desc: "Contribuez à une société plus inclusive." },
-                        { title: "Qualité", icon: CheckCircle2, desc: "Cours validés par des experts certifiés." }
-                    ].map((item) => (
-                        <div key={item.title} className="p-6 bg-slate-50 rounded-3xl border border-slate-100 flex flex-col gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center text-primary shadow-sm">
-                                <item.icon className="h-5 w-5" />
-                            </div>
-                            <h3 className="font-bold text-slate-900 text-sm">{item.title}</h3>
-                            <p className="text-xs text-slate-400 font-medium leading-relaxed">{item.desc}</p>
+                        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-900 text-xs font-semibold">
+                            <Lightning size={14} weight="duotone" className="text-amber-500" />
+                            Tarification Simple
                         </div>
-                    ))}
+                        
+                        <h1 className="font-heading text-4xl md:text-6xl font-bold text-slate-900 tracking-tight leading-tight" data-testid="pricing-page-title">
+                            Investissez dans votre{" "}
+                            <span className="text-gradient">Avenir LSF</span>
+                        </h1>
+                        
+                        <p className="text-lg md:text-xl text-stone-600 max-w-2xl mx-auto">
+                            Des plans flexibles pour tous les besoins, de l'initiation personnelle à l'excellence professionnelle.
+                        </p>
+
+                        {/* Billing Toggle */}
+                        <div className="flex items-center justify-center pt-8">
+                            <div className="bg-stone-100 p-1.5 rounded-full flex items-center gap-1 border border-stone-200">
+                                <button
+                                    onClick={() => setBillingCycle("monthly")}
+                                    data-testid="billing-monthly-btn"
+                                    className={cn(
+                                        "px-6 py-2.5 rounded-full text-sm font-semibold transition-all",
+                                        billingCycle === "monthly"
+                                            ? "bg-white text-slate-900 shadow-md"
+                                            : "text-stone-500 hover:text-slate-900"
+                                    )}
+                                >
+                                    Mensuel
+                                </button>
+                                <button
+                                    onClick={() => setBillingCycle("annually")}
+                                    data-testid="billing-annually-btn"
+                                    className={cn(
+                                        "px-6 py-2.5 rounded-full text-sm font-semibold transition-all relative",
+                                        billingCycle === "annually"
+                                            ? "bg-white text-slate-900 shadow-md"
+                                            : "text-stone-500 hover:text-slate-900"
+                                    )}
+                                >
+                                    Annuel
+                                    <span className="absolute -top-2 -right-2 px-2 py-0.5 rounded-full bg-emerald-500 text-[10px] text-white font-bold shadow-sm">
+                                        -20%
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                    </motion.div>
                 </div>
-            </div>
+            </section>
 
-            {/* Trust Quote */}
-            <div className="p-12 md:p-20 bg-slate-900 rounded-[4rem] text-center space-y-8 relative overflow-hidden group">
-                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-                <div className="absolute -top-10 -right-10 w-40 h-40 bg-primary/20 rounded-full blur-3xl" />
+            {/* Pricing Cards */}
+            <section className="py-20 md:py-24">
+                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                        {/* Decorative glow */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] bg-indigo-100/30 rounded-full blur-[150px] pointer-events-none" />
 
-                <div className="relative space-y-6 max-w-2xl mx-auto">
-                    <HandMetal className="h-12 w-12 text-primary mx-auto opacity-50 group-hover:rotate-12 transition-transform duration-700" />
-                    <p className="text-2xl md:text-3xl font-black text-white italic leading-tight">
-                        "LSFCONNECT a transformé l'accès à la formation. C'est l'outil indispensable pour toute personne souhaitant s'investir sérieusement."
-                    </p>
-                    <div className="space-y-1">
-                        <span className="block text-primary font-black uppercase tracking-widest text-[10px]">Jean-Luc R.</span>
-                        <span className="block text-slate-400 text-xs font-bold">Interprète Expert Judicial</span>
+                        {plans.map((plan, i) => (
+                            <motion.div
+                                key={plan.name}
+                                className={cn(
+                                    "relative flex flex-col rounded-3xl bg-white border transition-all h-full",
+                                    plan.popular
+                                        ? "border-indigo-200 shadow-2xl shadow-indigo-900/10 scale-105 z-10"
+                                        : "border-stone-100 shadow-lg shadow-stone-200/50 hover:shadow-xl"
+                                )}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: i * 0.15 }}
+                                data-testid={`pricing-card-${plan.name.toLowerCase()}`}
+                            >
+                                {plan.popular && (
+                                    <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 px-5 py-1.5 bg-indigo-900 text-white text-xs font-semibold rounded-full shadow-lg">
+                                        Plus Populaire
+                                    </div>
+                                )}
+
+                                <div className="p-8 md:p-10 text-center border-b border-stone-100">
+                                    <span className={cn(
+                                        "text-sm font-semibold uppercase tracking-wider",
+                                        plan.popular ? "text-indigo-600" : "text-stone-400"
+                                    )}>
+                                        Plan {plan.name}
+                                    </span>
+                                    
+                                    <div className="mt-4 mb-3">
+                                        {plan.price === "Custom" ? (
+                                            <span className="font-heading text-4xl font-bold text-slate-900">Sur Devis</span>
+                                        ) : (
+                                            <div className="flex items-center justify-center gap-1">
+                                                <span className="text-lg text-stone-400 self-start mt-2">€</span>
+                                                <span className="font-heading text-6xl font-bold text-slate-900 tracking-tight">
+                                                    {billingCycle === "annually" && plan.price !== "0"
+                                                        ? Math.floor(parseInt(plan.price) * 0.8)
+                                                        : plan.price}
+                                                </span>
+                                                <span className="text-stone-400 self-end mb-2">/mo</span>
+                                            </div>
+                                        )}
+                                    </div>
+                                    
+                                    <p className="text-sm text-stone-500">{plan.description}</p>
+                                </div>
+
+                                <div className="p-8 md:p-10 flex-grow">
+                                    <ul className="space-y-4">
+                                        {plan.features.map((feature) => (
+                                            <li key={feature} className="flex items-start gap-3 text-sm text-stone-600">
+                                                <CheckCircle
+                                                    size={20}
+                                                    weight="duotone"
+                                                    className={cn(
+                                                        "shrink-0 mt-0.5",
+                                                        plan.popular ? "text-indigo-600" : "text-stone-400"
+                                                    )}
+                                                />
+                                                <span>{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+
+                                <div className="p-8 md:p-10 pt-0">
+                                    <Link
+                                        href={plan.href}
+                                        className={cn(
+                                            "w-full inline-flex items-center justify-center gap-2 px-6 py-4 text-base font-semibold rounded-full transition-all active:scale-[0.98]",
+                                            plan.popular
+                                                ? "bg-indigo-900 text-white hover:bg-indigo-800 shadow-xl shadow-indigo-900/20"
+                                                : "bg-slate-900 text-white hover:bg-slate-800 shadow-lg"
+                                        )}
+                                        data-testid={`pricing-cta-${plan.name.toLowerCase()}`}
+                                    >
+                                        {plan.cta}
+                                        <ArrowRight size={18} weight="bold" />
+                                    </Link>
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
                 </div>
-            </div>
+            </section>
+
+            {/* Why Subscribe Section */}
+            <section className="py-20 md:py-24 bg-white border-t border-stone-100">
+                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                        <motion.div
+                            className="space-y-6"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true }}
+                        >
+                            <h2 className="font-heading text-3xl md:text-4xl font-bold text-slate-900 leading-tight">
+                                Pourquoi s'abonner à{" "}
+                                <span className="text-gradient">LSFCONNECT Pro ?</span>
+                            </h2>
+                            <p className="text-lg text-stone-600 leading-relaxed">
+                                Nous réinvestissons chaque abonnement dans la création de nouveaux cours et le support aux experts LSF indépendants.
+                            </p>
+                        </motion.div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {[
+                                { title: "Sécurité", icon: ShieldCheck, desc: "Paiements 100% sécurisés par Stripe." },
+                                { title: "Liberté", icon: Star, desc: "Annulez votre abonnement à tout moment." },
+                                { title: "Impact", icon: GlobeSimple, desc: "Contribuez à une société plus inclusive." },
+                                { title: "Qualité", icon: CheckCircle, desc: "Cours validés par des experts certifiés." }
+                            ].map((item, i) => (
+                                <motion.div
+                                    key={item.title}
+                                    className="p-6 bg-stone-50 rounded-2xl border border-stone-100 hover:bg-white hover:shadow-lg hover:border-indigo-100 transition-all"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: i * 0.1 }}
+                                >
+                                    <div className="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-indigo-900 shadow-sm mb-4">
+                                        <item.icon size={24} weight="duotone" />
+                                    </div>
+                                    <h3 className="font-bold text-slate-900 mb-2">{item.title}</h3>
+                                    <p className="text-sm text-stone-500">{item.desc}</p>
+                                </motion.div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Quote CTA */}
+            <section className="py-20 md:py-24">
+                <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <motion.div
+                        className="p-12 md:p-20 gradient-primary rounded-[2.5rem] text-center relative overflow-hidden"
+                        initial={{ opacity: 0, y: 30 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                    >
+                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+                        <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-400/20 rounded-full blur-[100px] pointer-events-none" />
+
+                        <div className="relative z-10 space-y-6 max-w-2xl mx-auto">
+                            <HandWaving size={48} weight="duotone" className="text-amber-400 mx-auto" />
+                            
+                            <p className="font-heading text-2xl md:text-3xl font-bold text-white leading-relaxed">
+                                "LSFCONNECT a transformé l'accès à la formation. C'est l'outil indispensable pour toute personne souhaitant s'investir sérieusement."
+                            </p>
+                            
+                            <div className="space-y-1">
+                                <span className="block text-amber-400 font-semibold">Jean-Luc R.</span>
+                                <span className="block text-indigo-200 text-sm">Interprète Expert Juridique</span>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+            </section>
         </div>
     );
 }
