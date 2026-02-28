@@ -142,7 +142,7 @@ export default function RegisterPage() {
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full h-12 text-base font-bold" disabled={loading}>
+                        <Button type="submit" data-testid="register-submit-btn" className="w-full h-12 text-base font-bold" disabled={loading}>
                             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Créer mon compte"}
                         </Button>
                     </CardContent>
