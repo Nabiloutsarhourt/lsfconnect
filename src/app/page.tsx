@@ -3,196 +3,310 @@
 import Link from "next/link";
 import { LSFVideoPlayer } from "@/components/ui-custom/LSFVideoPlayer";
 import { Button } from "@/components/ui/button";
+import { motion } from "framer-motion";
 import {
-  CheckCircle2, ShieldCheck, Zap, Hand,
-  ArrowRight, Globe, Users, Trophy,
-  Play, Star, Sparkles, MessageCircle,
+  ShieldCheck, Lightning, HandWaving, ArrowRight,
+  GlobeSimple, Users, Trophy, ChatCircle,
   Gavel, Stethoscope, Briefcase, Heart,
-  Quote
-} from "lucide-react";
+  Quotes, Play, Star, CheckCircle, Sparkle
+} from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
+
+const fadeInUp = {
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] }
+};
+
+const staggerContainer = {
+  animate: { transition: { staggerChildren: 0.1 } }
+};
 
 export default function Home() {
   return (
-    <div className="flex flex-col bg-white overflow-hidden">
-      {/* Hero Section - The "WOW" Entrance */}
-      <section className="relative min-h-[90vh] flex items-center pt-20 pb-12 overflow-hidden">
-        {/* Background Gradients */}
-        <div className="absolute top-0 right-0 -mr-24 -mt-24 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[100px] opacity-50 animate-pulse" />
-        <div className="absolute bottom-0 left-0 -ml-24 -mb-24 w-[400px] h-[400px] bg-blue-500/10 rounded-full blur-[80px] opacity-40" />
+    <div className="flex flex-col overflow-hidden">
+      {/* Hero Section */}
+      <section className="relative min-h-[90vh] flex items-center pt-12 pb-20 gradient-hero overflow-hidden">
+        {/* Decorative elements */}
+        <div className="absolute top-20 right-10 w-72 h-72 bg-indigo-200/40 rounded-full blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-20 left-10 w-96 h-96 bg-amber-200/30 rounded-full blur-[120px] pointer-events-none" />
 
-        <div className="container relative z-10 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          <div className="flex flex-col gap-8 animate-in fade-in slide-in-from-left-8 duration-1000">
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-primary italic">
-              <Sparkles className="h-3.5 w-3.5 fill-primary/20" />
-              L'inclusion au bout des doigts
-            </div>
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+            {/* Left Content */}
+            <motion.div 
+              className="lg:col-span-6 flex flex-col gap-8"
+              initial="initial"
+              animate="animate"
+              variants={staggerContainer}
+            >
+              <motion.div 
+                variants={fadeInUp}
+                className="inline-flex items-center gap-2 w-fit rounded-full border border-indigo-200 bg-white/80 backdrop-blur px-4 py-2 text-xs font-semibold text-indigo-900 shadow-sm"
+              >
+                <Sparkle size={16} weight="duotone" className="text-amber-500" />
+                L'inclusion au bout des doigts
+              </motion.div>
 
-            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-slate-900 italic uppercase">
-              La Puissance de la <span className="text-primary not-italic underline decoration-slate-200 decoration-[16px] underline-offset-[-4px]">LSF</span> Entre Vos Mains.
-            </h1>
+              <motion.h1 
+                variants={fadeInUp}
+                className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-slate-900"
+              >
+                La Puissance de la{" "}
+                <span className="text-gradient">LSF</span>
+                <br />
+                Entre Vos Mains.
+              </motion.h1>
 
-            <p className="text-xl text-slate-500 font-medium max-w-[550px] leading-relaxed italic">
-              Réservez un expert certifié ou maîtrisez la Langue des Signes Française avec la première plateforme de SaaS e-learning tout-en-un.
-            </p>
+              <motion.p 
+                variants={fadeInUp}
+                className="text-lg md:text-xl text-stone-600 max-w-xl leading-relaxed"
+              >
+                Réservez un expert certifié ou maîtrisez la Langue des Signes Française avec la première plateforme de SaaS e-learning tout-en-un.
+              </motion.p>
 
-            <div className="flex flex-wrap gap-6 pt-4">
-              <Button size="lg" asChild className="h-16 px-10 rounded-[2rem] bg-slate-900 shadow-2xl shadow-slate-900/20 font-black uppercase tracking-widest text-xs gap-3 hover:-translate-y-1 transition-all">
-                <Link href="/register">
+              <motion.div 
+                variants={fadeInUp}
+                className="flex flex-wrap gap-4 pt-2"
+              >
+                <Link
+                  href="/register"
+                  data-testid="hero-cta-primary"
+                  className="inline-flex items-center gap-3 px-8 py-4 text-base font-semibold text-white bg-indigo-900 hover:bg-indigo-800 rounded-full shadow-xl shadow-indigo-900/20 transition-all hover:shadow-2xl active:scale-[0.98]"
+                >
                   Commencer l'Aventure
-                  <ArrowRight className="h-4 w-4" />
+                  <ArrowRight size={20} weight="bold" />
                 </Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="h-16 px-10 rounded-[2rem] border-slate-200 font-black uppercase tracking-widest text-xs gap-3 hover:bg-slate-50 transition-all">
-                <Link href="/how-it-works">
+                <Link
+                  href="/how-it-works"
+                  data-testid="hero-cta-secondary"
+                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-indigo-900 bg-white hover:bg-indigo-50 border-2 border-indigo-100 rounded-full transition-all"
+                >
+                  <Play size={20} weight="fill" />
                   Voir la Démo
                 </Link>
-              </Button>
-            </div>
+              </motion.div>
 
-            <div className="flex items-center gap-8 pt-6 border-t border-slate-100">
-              <div className="flex -space-x-3">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-xl border-2 border-white bg-slate-100 overflow-hidden shadow-sm">
-                    <img src={`https://i.pravatar.cc/100?img=${i + 10}`} alt="user" className="w-full h-full object-cover" />
+              <motion.div 
+                variants={fadeInUp}
+                className="flex items-center gap-6 pt-6 border-t border-stone-200"
+              >
+                <div className="flex -space-x-3">
+                  {[
+                    "https://images.unsplash.com/photo-1666113604293-d34734339acb?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1657771072153-878f8b0ce74a?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1542577731-5ee4fc6152d2?w=100&h=100&fit=crop"
+                  ].map((url, i) => (
+                    <div
+                      key={i}
+                      className="w-11 h-11 rounded-full border-3 border-white bg-stone-100 overflow-hidden shadow-md"
+                    >
+                      <img src={url} alt="Expert" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
+                  <div className="w-11 h-11 rounded-full border-3 border-white bg-indigo-900 flex items-center justify-center text-white text-xs font-bold shadow-md">
+                    +500
                   </div>
-                ))}
-              </div>
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((i) => <Star key={i} className="h-3 w-3 fill-amber-400 text-amber-400" />)}
                 </div>
-                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">+500 experts vérifiés</span>
-              </div>
-            </div>
-          </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star key={i} size={14} weight="fill" className="text-amber-400" />
+                    ))}
+                    <span className="text-sm font-semibold text-slate-900 ml-1">4.9</span>
+                  </div>
+                  <span className="text-xs font-medium text-stone-500">+500 experts vérifiés</span>
+                </div>
+              </motion.div>
+            </motion.div>
 
-          <div className="relative group animate-in fade-in zoom-in-95 duration-1000 delay-200">
-            <div className="absolute -inset-4 bg-gradient-to-r from-primary to-blue-600 rounded-[3rem] blur-2xl opacity-20 group-hover:opacity-40 transition-opacity duration-1000" />
-            <div className="relative aspect-[4/3] rounded-[3rem] overflow-hidden shadow-2xl border-8 border-white bg-slate-900">
-              <LSFVideoPlayer
-                src="https://www.w3schools.com/html/mov_bbb.mp4"
-                title="Introduction à LSFCONNECT"
-                hasLSFInterpretation={true}
-                className="w-full h-full"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent pointer-events-none" />
-              <div className="absolute bottom-8 left-8 flex items-center gap-4">
-                <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white">
-                  <Play className="h-5 w-5 fill-white" />
+            {/* Right Content - Video */}
+            <motion.div 
+              className="lg:col-span-6 relative"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <div className="absolute -inset-4 bg-indigo-900/10 rounded-[2rem] blur-2xl pointer-events-none" />
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl border-4 border-white bg-slate-900">
+                <LSFVideoPlayer
+                  src="https://www.w3schools.com/html/mov_bbb.mp4"
+                  title="Introduction à LSFCONNECT"
+                  hasLSFInterpretation={true}
+                  className="w-full h-full"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent pointer-events-none" />
+                <div className="absolute bottom-6 left-6 flex items-center gap-3">
+                  <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white">
+                    <Play size={20} weight="fill" />
+                  </div>
+                  <span className="text-white font-semibold text-sm">Démo en LSF</span>
                 </div>
-                <span className="text-white font-black uppercase tracking-widest text-[10px]">Démo en LSF</span>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* Trust Domains - Marquee-like grid */}
-      <section className="py-20 border-y border-slate-50 bg-slate-50/30 overflow-hidden">
-        <div className="container relative overflow-hidden">
-          <div className="flex flex-col items-center mb-12 text-center">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.3em] mb-4">Domaines d'Intervention</span>
-            <h2 className="text-3xl font-black text-slate-900 italic uppercase">L'expertise <span className="text-primary not-italic">Omniprésente</span></h2>
-          </div>
+      {/* Trust Domains */}
+      <section className="py-20 bg-white border-y border-stone-100">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            className="flex flex-col items-center mb-16 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-3">Domaines d'Intervention</span>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-slate-900">
+              L'expertise <span className="text-gradient">Omniprésente</span>
+            </h2>
+          </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
             {[
-              { name: "Juridique", icon: Gavel, color: "bg-blue-500" },
-              { name: "Médical", icon: Stethoscope, color: "bg-red-500" },
-              { name: "Entreprise", icon: Briefcase, color: "bg-slate-900" },
-              { name: "Social", icon: Heart, color: "bg-green-500" },
+              { name: "Juridique", icon: Gavel, color: "bg-blue-600", desc: "Tribunaux, avocats" },
+              { name: "Médical", icon: Stethoscope, color: "bg-rose-500", desc: "Hôpitaux, cliniques" },
+              { name: "Entreprise", icon: Briefcase, color: "bg-indigo-900", desc: "Réunions, RH" },
+              { name: "Social", icon: Heart, color: "bg-emerald-600", desc: "Famille, éducation" },
             ].map((domain, i) => (
-              <div key={i} className="flex flex-col items-center gap-4 group cursor-default">
+              <motion.div
+                key={i}
+                className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-stone-50 hover:bg-white hover:shadow-xl border border-transparent hover:border-stone-100 transition-all group cursor-default"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
                 <div className={cn(
-                  "w-20 h-20 rounded-[2rem] flex items-center justify-center text-white shadow-2xl transition-all duration-500 group-hover:-translate-y-2 group-hover:rotate-6",
+                  "w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110 group-hover:-rotate-3",
                   domain.color
                 )}>
-                  <domain.icon className="h-8 w-8" />
+                  <domain.icon size={28} weight="duotone" />
                 </div>
-                <span className="text-sm font-black uppercase tracking-widest text-slate-900">{domain.name}</span>
-              </div>
+                <div className="text-center">
+                  <span className="text-base font-bold text-slate-900 block">{domain.name}</span>
+                  <span className="text-xs text-stone-500">{domain.desc}</span>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Features - High-end Cards */}
-      <section className="py-32 container">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      {/* Features Section */}
+      <section className="py-24 md:py-32 container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div 
+          className="text-center mb-16"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-3 block">Pourquoi Nous Choisir</span>
+          <h2 className="font-heading text-3xl md:text-5xl font-bold text-slate-900 max-w-3xl mx-auto">
+            Une plateforme pensée pour <span className="text-gradient">l'accessibilité</span>
+          </h2>
+        </motion.div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
             {
-              title: "Validation Expertise",
-              description: "Chaque interprète subit une vérification manuelle de ses diplômes et de son badge 'Expert Certifié'.",
+              title: "Experts Vérifiés",
+              description: "Chaque interprète subit une vérification manuelle de ses diplômes et obtient un badge 'Expert Certifié'.",
               icon: ShieldCheck,
-              tag: "Sécurité"
+              tag: "Confiance"
             },
             {
-              title: "Matching Temps Réel",
-              description: "Besoin d'aide immédiate ? Notre algorithme vous connecte à un expert en moins de 300 secondes.",
-              icon: Zap,
+              title: "Matching Rapide",
+              description: "Besoin d'aide immédiate ? Notre algorithme vous connecte à un expert disponible en moins de 5 minutes.",
+              icon: Lightning,
               tag: "Rapidité"
             },
             {
-              title: "Apprentissage LSF",
-              description: "Des centaines de leçons vidéo haute définition pour maîtriser tous les domaines de la LSF.",
+              title: "Formation LSF",
+              description: "Des centaines de leçons vidéo haute définition pour maîtriser tous les domaines de la Langue des Signes.",
               icon: GraduationCap,
-              tag: "Formation"
+              tag: "E-Learning"
             },
           ].map((feature, i) => (
-            <Card key={i} className="group relative rounded-[3rem] border-none shadow-2xl shadow-slate-200/50 p-12 bg-white hover:-translate-y-4 transition-all duration-700 overflow-hidden">
-              <div className="absolute top-0 left-0 w-full h-1 bg-slate-50 group-hover:bg-primary transition-colors" />
-              <div className="w-16 h-16 rounded-[1.5rem] bg-slate-50 flex items-center justify-center text-slate-900 group-hover:bg-primary group-hover:text-white transition-all duration-500 mb-10 shadow-inner">
-                <feature.icon className="h-7 w-7" />
+            <motion.div
+              key={i}
+              className="group relative p-8 md:p-10 rounded-3xl bg-white border border-stone-100 card-hover"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: i * 0.15 }}
+            >
+              <div className="absolute top-0 left-0 right-0 h-1 bg-stone-100 group-hover:bg-indigo-600 rounded-t-3xl transition-colors" />
+              
+              <div className="w-14 h-14 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-900 group-hover:bg-indigo-900 group-hover:text-white transition-all mb-8">
+                <feature.icon size={28} weight="duotone" />
               </div>
-              <div className="space-y-4">
-                <span className="text-[10px] font-black text-primary uppercase tracking-widest">{feature.tag}</span>
-                <h3 className="text-2xl font-black text-slate-900 italic uppercase leading-none">{feature.title}</h3>
-                <p className="text-slate-500 font-medium italic leading-relaxed">{feature.description}</p>
-              </div>
-              <div className="mt-8 pt-8 border-t border-slate-50 flex justify-end">
-                <div className="p-3 rounded-xl bg-slate-50 text-slate-300 group-hover:text-primary group-hover:bg-primary/5 transition-all">
-                  <ArrowRight className="h-4 w-4" />
+              
+              <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">{feature.tag}</span>
+              <h3 className="font-heading text-2xl font-bold text-slate-900 mt-2 mb-4">{feature.title}</h3>
+              <p className="text-stone-600 leading-relaxed">{feature.description}</p>
+              
+              <div className="mt-8 pt-6 border-t border-stone-100 flex justify-end">
+                <div className="p-2 rounded-xl bg-stone-50 text-stone-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-all">
+                  <ArrowRight size={20} weight="bold" />
                 </div>
               </div>
-            </Card>
+            </motion.div>
           ))}
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-24 bg-slate-900 text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/20 rounded-full blur-[100px] -mr-20 -mt-20" />
-        <div className="container relative z-10 grid grid-cols-2 lg:grid-cols-4 gap-12 text-center">
-          {[
-            { label: "Utilisateurs", value: "10K+", icon: Users },
-            { label: "Experts", value: "500+", icon: ShieldCheck },
-            { label: "Diplômes", value: "3.2K", icon: Trophy },
-            { label: "Échanges", value: "45K", icon: MessageCircle },
-          ].map((stat, i) => (
-            <div key={i} className="space-y-3">
-              <div className="w-12 h-12 rounded-xl bg-white/5 mx-auto flex items-center justify-center text-primary mb-6">
-                <stat.icon className="h-6 w-6" />
-              </div>
-              <h4 className="text-5xl font-black italic tracking-tighter">{stat.value}</h4>
-              <p className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic">{stat.label}</p>
-            </div>
-          ))}
+      <section className="py-20 bg-indigo-900 text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-400/20 rounded-full blur-[150px] pointer-events-none" />
+        
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
+            {[
+              { label: "Utilisateurs", value: "10K+", icon: Users },
+              { label: "Experts Certifiés", value: "500+", icon: ShieldCheck },
+              { label: "Certificats", value: "3.2K", icon: Trophy },
+              { label: "Échanges", value: "45K", icon: ChatCircle },
+            ].map((stat, i) => (
+              <motion.div
+                key={i}
+                className="text-center"
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <div className="w-14 h-14 rounded-2xl bg-white/10 mx-auto flex items-center justify-center text-amber-400 mb-5">
+                  <stat.icon size={28} weight="duotone" />
+                </div>
+                <h4 className="font-heading text-4xl md:text-5xl font-bold tracking-tight">{stat.value}</h4>
+                <p className="text-sm font-medium text-indigo-200 mt-2 uppercase tracking-wider">{stat.label}</p>
+              </motion.div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* Testimonials - Social Proof */}
-      <section className="py-32 bg-slate-50/50 relative overflow-hidden">
-        <div className="container relative z-10">
-          <div className="flex flex-col items-center mb-20 text-center space-y-4">
-            <span className="text-[10px] font-black text-primary uppercase tracking-[0.4em] italic">Paroles d'Étudiants</span>
-            <h2 className="text-4xl md:text-6xl font-black text-slate-900 italic uppercase tracking-tighter">
-              Leurs <span className="text-primary not-italic underline decoration-slate-200 decoration-[12px] underline-offset-[-2px]">Histoires</span> de Succès
+      {/* Testimonials */}
+      <section className="py-24 md:py-32 bg-stone-50/50">
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div 
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+          >
+            <span className="text-sm font-semibold text-indigo-600 uppercase tracking-wider mb-3 block">Témoignages</span>
+            <h2 className="font-heading text-3xl md:text-5xl font-bold text-slate-900">
+              Leurs <span className="text-gradient">Histoires</span> de Succès
             </h2>
-            <p className="text-slate-500 font-medium italic max-w-xl">
-              Découvrez comment LSFCONNECT transforme le quotidien des apprenants et des professionnels de la LSF.
+            <p className="text-stone-600 mt-4 max-w-2xl mx-auto">
+              Découvrez comment LSFCONNECT transforme le quotidien des apprenants et professionnels.
             </p>
-          </div>
+          </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
@@ -200,93 +314,113 @@ export default function Home() {
                 name: "Marie L.",
                 role: "Infirmière",
                 content: "Grâce au module Médical, je peux enfin communiquer avec mes patients sourds en toute autonomie. Une révolution pour ma pratique.",
-                avatar: "https://i.pravatar.cc/100?img=32",
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop",
                 domain: "Médical"
               },
               {
                 name: "Thomas D.",
                 role: "Étudiant Droit",
                 content: "Le lexique Juridique est d'une précision incroyable. La plateforme m'a permis de valider mon stage en cabinet avec brio.",
-                avatar: "https://i.pravatar.cc/100?img=12",
-                domain: "Judidique"
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop",
+                domain: "Juridique"
               },
               {
                 name: "Sophie R.",
                 role: "Consultante RH",
                 content: "L'interface est d'une fluidité rare. Les experts réservés via la plateforme sont d'un professionnalisme exemplaire.",
-                avatar: "https://i.pravatar.cc/100?img=45",
+                avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop",
                 domain: "Entreprise"
               }
             ].map((testimonial, i) => (
-              <Card key={i} className="rounded-[3.5rem] p-10 bg-white border-none shadow-3xl shadow-slate-200/40 relative group hover:-translate-y-2 transition-all duration-700">
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-slate-50 shadow-inner">
+              <motion.div
+                key={i}
+                className="p-8 rounded-3xl bg-white border border-stone-100 card-hover"
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.15 }}
+              >
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-stone-100">
                     <img src={testimonial.avatar} alt={testimonial.name} className="w-full h-full object-cover" />
                   </div>
                   <div>
-                    <h4 className="font-black text-slate-900 uppercase text-sm">{testimonial.name}</h4>
+                    <h4 className="font-bold text-slate-900">{testimonial.name}</h4>
                     <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-black text-primary uppercase tracking-widest">{testimonial.domain}</span>
-                      <CheckCircle2 className="h-3 w-3 text-green-500" />
+                      <span className="text-xs font-semibold text-indigo-600 uppercase tracking-wider">{testimonial.domain}</span>
+                      <CheckCircle size={14} weight="fill" className="text-emerald-500" />
                     </div>
                   </div>
                 </div>
+                
                 <div className="relative">
-                  <Quote className="absolute -top-4 -left-2 h-10 w-10 text-slate-50 -z-10" />
-                  <p className="text-slate-600 font-medium italic leading-relaxed relative z-10">
+                  <Quotes size={32} weight="fill" className="text-stone-100 absolute -top-2 -left-1" />
+                  <p className="text-stone-600 leading-relaxed relative z-10 pl-4">
                     "{testimonial.content}"
                   </p>
                 </div>
-                <div className="mt-8 pt-8 border-t border-slate-50 flex items-center justify-between">
+                
+                <div className="mt-6 pt-6 border-t border-stone-100 flex items-center justify-between">
                   <div className="flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map(s => <Star key={s} className="h-2.5 w-2.5 fill-amber-400 text-amber-400" />)}
+                    {[1, 2, 3, 4, 5].map(s => <Star key={s} size={14} weight="fill" className="text-amber-400" />)}
                   </div>
-                  <span className="text-[9px] font-bold text-slate-300 uppercase tracking-widest">Achat Vérifié</span>
+                  <span className="text-xs font-medium text-stone-400 uppercase tracking-wider">Avis vérifié</span>
                 </div>
-              </Card>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-32 container">
-        <div className="relative rounded-[4rem] bg-gradient-to-br from-primary to-blue-600 p-16 md:p-24 overflow-hidden text-center text-white shadow-2xl">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10" />
-          <div className="relative z-10 flex flex-col items-center gap-10">
-            <h2 className="text-4xl md:text-6xl font-black italic uppercase leading-tight tracking-tighter max-w-4xl">
-              Prêt à Transformer Votre <span className="text-slate-900 not-italic">Accessibilité ?</span>
+      <section className="py-24 container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div
+          className="relative rounded-[2.5rem] gradient-primary p-12 md:p-20 overflow-hidden text-center text-white shadow-2xl"
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+        >
+          <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-10" />
+          <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-400/20 rounded-full blur-[100px] pointer-events-none" />
+          
+          <div className="relative z-10 flex flex-col items-center gap-8 max-w-3xl mx-auto">
+            <HandWaving size={56} weight="duotone" className="text-amber-400" />
+            
+            <h2 className="font-heading text-3xl md:text-5xl font-bold leading-tight">
+              Prêt à Transformer Votre{" "}
+              <span className="text-amber-400">Accessibilité ?</span>
             </h2>
-            <p className="text-xl md:text-2xl font-medium italic opacity-90 max-w-2xl">
-              Rejoignez la révolution de l'inclusion et accédez aux meilleurs interprètes de France dès aujourd'hui.
+            
+            <p className="text-lg md:text-xl text-indigo-200 max-w-2xl">
+              Rejoignez la révolution de l'inclusion et accédez aux meilleurs interprètes de France.
             </p>
-            <div className="flex flex-wrap gap-6 justify-center">
-              <Button size="lg" variant="secondary" asChild className="h-16 px-12 rounded-[2rem] bg-white text-slate-900 font-black uppercase tracking-widest text-xs hover:shadow-2xl transition-all">
-                <Link href="/register">Inscrivez-vous Gratuitement</Link>
-              </Button>
-              <Button size="lg" variant="outline" asChild className="h-16 px-12 rounded-[2rem] border-white/20 text-white font-black uppercase tracking-widest text-xs hover:bg-white hover:text-slate-900 transition-all">
-                <Link href="/pricing">Voir les Plans Pro</Link>
-              </Button>
+            
+            <div className="flex flex-wrap gap-4 justify-center pt-4">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-indigo-900 bg-white hover:bg-stone-50 rounded-full shadow-xl transition-all hover:shadow-2xl active:scale-[0.98]"
+              >
+                Inscrivez-vous Gratuitement
+                <ArrowRight size={20} weight="bold" />
+              </Link>
+              <Link
+                href="/pricing"
+                className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white border-2 border-white/20 hover:bg-white/10 rounded-full transition-all"
+              >
+                Voir les Plans Pro
+              </Link>
             </div>
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
 }
 
-function Card({ children, className }: { children: React.ReactNode, className?: string }) {
+function GraduationCap({ size, weight, className }: { size?: number; weight?: string; className?: string }) {
   return (
-    <div className={cn("bg-white", className)}>
-      {children}
-    </div>
-  );
-}
-
-function GraduationCap({ className }: { className?: string }) {
-  return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={cn("lucide lucide-graduation-cap", className)}>
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 9 3 12 0v-5" />
+    <svg xmlns="http://www.w3.org/2000/svg" width={size || 24} height={size || 24} viewBox="0 0 256 256" className={className}>
+      <path fill="currentColor" d="M251.76 88.94l-120-64a8 8 0 00-7.52 0l-120 64a8 8 0 000 14.12L32 117.87v48.42a15.91 15.91 0 004.06 10.65C49.16 191.53 78.51 216 128 216a130 130 0 0048-8.76V240a8 8 0 0016 0v-40.49a115.63 115.63 0 0027.94-22.57 15.91 15.91 0 004.06-10.65v-48.42l27.76-14.81a8 8 0 000-14.12zM128 200c-43.27 0-68.72-21.14-80-33.71V126.4l76.24 40.66a8 8 0 007.52 0L176 143.47v46.34c-12.6 5.88-28.31 10.19-48 10.19zm80-33.75a97.83 97.83 0 01-16 14.25V134.93l16-8.53zm-80-20.59L43.76 96 128 46.34 212.24 96z"/>
     </svg>
   );
 }
