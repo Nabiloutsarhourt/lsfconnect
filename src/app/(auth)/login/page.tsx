@@ -109,7 +109,7 @@ function LoginForm() {
                                 className="flex h-11 w-full rounded-md border border-input bg-background/50 px-3 py-2 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                             />
                         </div>
-                        <Button type="submit" className="w-full h-11 text-base font-bold" disabled={loading}>
+                        <Button type="submit" data-testid="login-submit-btn" className="w-full h-11 text-base font-bold" disabled={loading}>
                             {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Se connecter"}
                         </Button>
                     </CardContent>
