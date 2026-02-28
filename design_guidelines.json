@@ -1,0 +1,174 @@
+{
+  "project_name": "LSFConnect",
+  "design_philosophy": {
+    "persona": "E1: The Anti-AI Designer",
+    "core_principles": [
+      "Accessibility is not a feature, it's the foundation.",
+      "Warmth over sterility: Medical/Legal doesn't have to be cold.",
+      "Clarity is King: High contrast, large typography, distinct visual hierarchy.",
+      "Motion with Meaning: Animations guide the user, not distract them."
+    ],
+    "theme_strategy": "Accessible High-Fidelity (Light Mode Default)",
+    "emotional_tone": "Empowering, Trustworthy, Human, Clear"
+  },
+  "typography": {
+    "font_family": {
+      "headings": "Outfit, sans-serif",
+      "body": "Plus Jakarta Sans, sans-serif",
+      "mono": "Space Mono, monospace"
+    },
+    "scale": {
+      "h1": "text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]",
+      "h2": "text-4xl md:text-5xl font-semibold tracking-tight leading-tight",
+      "h3": "text-2xl md:text-3xl font-medium",
+      "body_lg": "text-lg md:text-xl leading-relaxed",
+      "body_base": "text-base leading-relaxed",
+      "caption": "text-sm font-medium tracking-wide uppercase text-muted-foreground"
+    },
+    "installation_instructions": "Add 'Outfit' and 'Plus Jakarta Sans' via next/font/google in layout.tsx"
+  },
+  "colors": {
+    "palette": {
+      "primary": {
+        "DEFAULT": "#312E81",
+        "foreground": "#FFFFFF",
+        "description": "Deep Indigo - Trust, Authority, Calm"
+      },
+      "secondary": {
+        "DEFAULT": "#F59E0B",
+        "foreground": "#0F172A",
+        "description": "Warm Amber - Human connection, Attention, Action (Accessible on dark, avoid white text on it)"
+      },
+      "accent": {
+        "DEFAULT": "#EEF2FF",
+        "foreground": "#312E81",
+        "description": "Indigo 50 - Soft background highlights"
+      },
+      "background": {
+        "DEFAULT": "#FAFAF9",
+        "description": "Warm Alabaster - Reduces eye strain compared to pure white"
+      },
+      "surface": {
+        "DEFAULT": "#FFFFFF",
+        "description": "Pure white for cards/surfaces"
+      },
+      "success": {
+        "DEFAULT": "#059669",
+        "description": "Emerald 600 - Verified/Available status"
+      },
+      "text": {
+        "primary": "#0F172A",
+        "secondary": "#475569",
+        "muted": "#94A3B8"
+      }
+    },
+    "gradients": {
+      "hero_glow": "bg-gradient-to-br from-indigo-50 via-white to-amber-50",
+      "primary_action": "bg-gradient-to-r from-indigo-900 to-indigo-800 hover:to-indigo-700"
+    }
+  },
+  "layout_and_spacing": {
+    "container": {
+      "max_width": "max-w-7xl",
+      "padding": "px-4 sm:px-6 lg:px-8",
+      "center": "mx-auto"
+    },
+    "spacing_scale": {
+      "section_gap": "py-24 md:py-32",
+      "component_gap": "gap-8 md:gap-12",
+      "internal_padding": "p-6 md:p-8"
+    },
+    "radius": {
+      "default": "rounded-2xl",
+      "button": "rounded-full",
+      "card": "rounded-3xl"
+    },
+    "grid_systems": {
+      "bento_expert": "grid grid-cols-1 md:grid-cols-3 gap-6",
+      "hero_split": "grid grid-cols-1 lg:grid-cols-12 gap-12 items-center"
+    }
+  },
+  "visual_enhancers": {
+    "shadows": {
+      "card": "shadow-[0_2px_8px_rgba(0,0,0,0.08)] hover:shadow-[0_12px_24px_rgba(49,46,129,0.12)] transition-shadow duration-300",
+      "float": "shadow-xl shadow-indigo-900/10"
+    },
+    "glassmorphism": {
+      "header": "bg-white/80 backdrop-blur-xl border-b border-white/20",
+      "overlay": "bg-indigo-900/20 backdrop-blur-sm"
+    },
+    "borders": {
+      "subtle": "border border-stone-200",
+      "active": "border-2 border-indigo-600"
+    }
+  },
+  "components_strategy": {
+    "icons": {
+      "library": "@phosphor-icons/react",
+      "style": "Duotone",
+      "install_command": "npm install @phosphor-icons/react",
+      "usage_rule": "Use Duotone weight. Primary color for the icon body, Secondary/Opacity for the fill."
+    },
+    "buttons": {
+      "primary": "bg-indigo-900 text-white hover:bg-indigo-800 rounded-full px-8 py-6 text-lg font-medium shadow-lg hover:shadow-xl transition-all active:scale-95",
+      "secondary": "bg-amber-400 text-indigo-950 hover:bg-amber-500 rounded-full px-8 py-6 text-lg font-medium",
+      "outline": "border-2 border-indigo-200 text-indigo-900 hover:border-indigo-900 hover:bg-indigo-50 rounded-full px-6 py-4 font-medium"
+    },
+    "cards": {
+      "expert_profile": "bg-white rounded-3xl p-6 border border-stone-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden",
+      "feature": "bg-stone-50 rounded-2xl p-8 hover:bg-white hover:shadow-lg transition-all border border-transparent hover:border-indigo-100"
+    },
+    "inputs": {
+      "style": "bg-stone-50 border-stone-200 focus:ring-2 focus:ring-indigo-600 focus:border-transparent rounded-xl h-12 px-4"
+    }
+  },
+  "accessibility_checklist": {
+    "contrast": "Ensure text-to-background ratio is at least 4.5:1. Use deep indigo on white, or white on deep indigo. Avoid amber text on white.",
+    "focus_states": "Visible focus ring (ring-2 ring-indigo-600 ring-offset-2) on ALL interactive elements.",
+    "aria": "All icon-only buttons must have aria-label. Images must have alt text. Video players must have captions enabled by default.",
+    "motion": "Respect 'prefers-reduced-motion'. Wrap complex animations in 'useReducedMotion' check."
+  },
+  "image_assets": {
+    "hero_main": {
+      "url": "https://images.unsplash.com/photo-1749353709979-7f169131254e?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTJ8MHwxfHNlYXJjaHwxfHxzaWduJTIwbGFuZ3VhZ2UlMjBpbnRlcnByZXRlciUyMHByb2Zlc3Npb25hbCUyMGZyaWVuZGx5fGVufDB8fHx8MTc3MjMxNDczM3ww&ixlib=rb-4.1.0&q=85",
+      "alt": "Professional sign language interpreter smiling and signing",
+      "placement": "Landing Page Hero"
+    },
+    "student_learning": {
+      "url": "https://images.unsplash.com/photo-1758521541324-d304c5303fe5?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwyfHxzdHVkZW50JTIwbGVhcm5pbmclMjBvbmxpbmUlMjBsYXB0b3AlMjBoYXBweXxlbnwwfHx8fDE3NzIzMTQ3MzR8MA&ixlib=rb-4.1.0&q=85",
+      "alt": "Young woman waving during a video call on laptop",
+      "placement": "LMS / How it works section"
+    },
+    "expert_avatars": [
+      "https://images.unsplash.com/photo-1666113604293-d34734339acb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHwxfHxkaXZlcnNlJTIwcHJvZmVzc2lvbmFsJTIwaGVhZHNob3RzJTIwc21pbGluZ3xlbnwwfHx8fDE3NzIzMTQ3MzR8MA&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1755190897791-7040dfdb988f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHwyfHxkaXZlcnNlJTIwcHJvZmVzc2lvbmFsJTIwaGVhZHNob3RzJTIwc21pbGluZ3xlbnwwfHx8fDE3NzIzMTQ3MzR8MA&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1657771072153-878f8b0ce74a?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHwzfHxkaXZlcnNlJTIwcHJvZmVzc2lvbmFsJTIwaGVhZHNob3RzJTIwc21pbGluZ3xlbnwwfHx8fDE3NzIzMTQ3MzR8MA&ixlib=rb-4.1.0&q=85",
+      "https://images.unsplash.com/photo-1542577731-5ee4fc6152d2?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHw0fHxkaXZlcnNlJTIwcHJvZmVzc2lvbmFsJTIwaGVhZHNob3RzJTIwc21pbGluZ3xlbnwwfHx8fDE3NzIzMTQ3MzR8MA&ixlib=rb-4.1.0&q=85"
+    ]
+  },
+  "instructions_to_main_agent": [
+    "1. INSTALLATION: Run 'npm install @phosphor-icons/react clsx tailwind-merge framer-motion sonner' immediately.",
+    "2. FONTS: Update 'src/app/layout.tsx' to include Outfit (headings) and Plus Jakarta Sans (body). Apply them globally.",
+    "3. THEME: Since tailwind.config.js is missing (v4), add the custom colors directly to 'src/app/globals.css' in the @theme block or root variables.",
+    "4. COMPONENTS: Do NOT use default Shadcn cards. Build custom 'Card' components using the 'visual_enhancers' guidelines.",
+    "5. MOTION: Use 'framer-motion' for a subtle 'fade-up' effect on sections as they scroll into view. (initial={{opacity:0, y:20}} whileInView={{opacity:1, y:0}}).",
+    "6. NAV: Create a 'Glass' Navbar that becomes solid on scroll.",
+    "7. EXPERT PAGE: Use a 'Bento Grid' layout for the expert listing, not a simple list.",
+    "8. ACCESSIBILITY: Ensure all video components have a placeholder for 'CC' and 'Transcript' controls.",
+    "9. ICONS: Use Phosphor Icons 'Duotone' weight. Example: <User size={32} weight='duotone' className='text-indigo-600' />"
+  ],
+  "universal_guidelines": [
+    "You tend to converge toward generic, 'on distribution' outputs. In frontend design, this creates what users call the 'AI slop' aesthetic. Avoid this: make creative, distinctive frontends that surprise and delight.",
+    "Dark colors look good when used independently without gradients. DO NOT use dark colors as gradients.",
+    "Don't make generic centered layouts, simplistic gradients, and uniform styling.",
+    "Create depth through layered design elements with z-index hierarchy.",
+    "Use glass-morphism effects with backdrop filters (12-24px blur).",
+    "You MUST NOT apply universal transition. Eg: 'transition: all'. This results in breaking transforms. Always add transitions for specific interactive elements like button, input excluding transforms.",
+    "You MUST NOT center align the app container, ie do not add '.App { text-align: center; }' in the css file. This disrupts the human natural reading flow of text.",
+    "Always use modern button styles like pill-shaped, or sharp button with interaction animations & color relevant to the app style.",
+    "NEVER: use AI assistant Emoji characters like 🤖🧠 etc for icons.",
+    "Every interaction needs micro-animations - hover states, transitions, parallax effects, and entrance animations. Static = dead.",
+    "Use 2-3x more spacing than feels comfortable. Cramped designs look cheap.",
+    "Toasts: Use 'sonner' for toasts."
+  ]
+}
