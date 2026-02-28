@@ -22,13 +22,13 @@ export function Header() {
 
                 {/* Desktop Navigation */}
                 <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-                    <Link href="/experts" className="transition-colors hover:text-primary">
+                    <Link href="/experts" data-testid="nav-experts-link" className="transition-colors hover:text-primary">
                         Trouver un Expert
                     </Link>
-                    <Link href="/how-it-works" className="transition-colors hover:text-primary">
+                    <Link href="/how-it-works" data-testid="nav-how-it-works-link" className="transition-colors hover:text-primary">
                         Comment ça marche
                     </Link>
-                    <Link href="/pricing" className="transition-colors hover:text-primary">
+                    <Link href="/pricing" data-testid="nav-pricing-link" className="transition-colors hover:text-primary">
                         Tarifs
                     </Link>
                 </nav>
