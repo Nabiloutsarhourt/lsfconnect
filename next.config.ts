@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  transpilePackages: ["framer-motion", "sonner", "@phosphor-icons/react", "lucide-react"],
   async headers() {
     return [
       {
