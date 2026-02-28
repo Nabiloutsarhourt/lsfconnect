@@ -1,4 +1,5 @@
 "use client";
+// Force build trigger: v2.0 - Resolved conflict markers
 
 import Link from "next/link";
 import { useState } from "react";
