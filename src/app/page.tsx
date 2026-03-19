@@ -46,15 +46,15 @@ export default function Home() {
                 className="inline-flex items-center gap-2 w-fit rounded-full border border-indigo-200 bg-white/80 backdrop-blur px-4 py-2 text-xs font-semibold text-indigo-900 shadow-sm"
               >
                 <Sparkle size={16} weight="duotone" className="text-amber-500" />
-                L'inclusion au bout des doigts
+                La traduction d'excellence
               </motion.div>
 
               <motion.h1
                 variants={fadeInUp}
-                className="font-heading text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-slate-900"
+                className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-slate-900"
               >
-                La Puissance de la{" "}
-                <span className="text-gradient">LSF</span>
+                L'Expertise en{" "}
+                <span className="text-gradient">Traduction</span>
                 <br />
                 Entre Vos Mains.
               </motion.h1>
@@ -63,7 +63,7 @@ export default function Home() {
                 variants={fadeInUp}
                 className="text-lg md:text-xl text-stone-600 max-w-xl leading-relaxed"
               >
-                Réservez un expert certifié ou maîtrisez la Langue des Signes Française avec la première plateforme de SaaS e-learning tout-en-un.
+                Réservez instantanément un traducteur ou un interprète certifié (LSF et Langues Parlées) avec la plateforme SaaS la plus performante.
               </motion.p>
 
               <motion.div
@@ -81,7 +81,7 @@ export default function Home() {
                 <Link
                   href="/how-it-works"
                   data-testid="hero-cta-secondary"
-                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-indigo-900 bg-white hover:bg-indigo-50 border-2 border-indigo-100 rounded-full transition-all"
+                  className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-indigo-900 bg-white hover:bg-indigo-50 border-2 border-indigo-100 rounded-full transition-colors"
                 >
                   <Play size={20} weight="fill" />
                   Voir la Démo
@@ -147,7 +147,7 @@ export default function Home() {
                   <div className="p-3 bg-white/10 backdrop-blur-md rounded-xl border border-white/20 text-white">
                     <Play size={20} weight="fill" />
                   </div>
-                  <span className="text-white font-semibold text-sm">Démo en LSF</span>
+                  <span className="text-white font-semibold text-sm">Découvrez nos services</span>
                 </div>
               </div>
             </motion.div>
@@ -181,7 +181,7 @@ export default function Home() {
               <Link
                 key={i}
                 href={`/domains/${domain.slug}`}
-                className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-stone-50 hover:bg-white hover:shadow-xl border border-transparent hover:border-stone-100 transition-all group cursor-pointer"
+                className="flex flex-col items-center gap-4 p-6 rounded-2xl bg-stone-50 hover:bg-white hover:shadow-xl border border-transparent hover:border-stone-100 transition-colors group cursor-pointer"
               >
                 <div className={cn(
                   "w-16 h-16 rounded-2xl flex items-center justify-center text-white shadow-lg transition-transform group-hover:scale-110 group-hover:-rotate-3",
@@ -228,10 +228,10 @@ export default function Home() {
               tag: "Rapidité"
             },
             {
-              title: "Formation LSF",
-              description: "Des centaines de leçons vidéo haute définition pour maîtriser tous les domaines de la Langue des Signes.",
-              icon: GraduationCap,
-              tag: "E-Learning"
+              title: "Traduction & Interprétation",
+              description: "Plateforme unifiée pour toutes vos demandes : Langue des Signes Française (LSF) et multiples langues étrangères.",
+              icon: GlobeSimple,
+              tag: "Polyvalence"
             },
           ].map((feature, i) => (
             <motion.div
@@ -253,7 +253,7 @@ export default function Home() {
               <p className="text-stone-600 leading-relaxed">{feature.description}</p>
 
               <div className="mt-8 pt-6 border-t border-stone-100 flex justify-end">
-                <div className="p-2 rounded-xl bg-stone-50 text-stone-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-all">
+                <div className="p-2 rounded-xl bg-stone-50 text-stone-400 group-hover:text-indigo-600 group-hover:bg-indigo-50 transition-colors">
                   <ArrowRight size={20} weight="bold" />
                 </div>
               </div>
@@ -397,25 +397,25 @@ export default function Home() {
             <HandWaving size={56} weight="duotone" className="text-amber-400" />
 
             <h2 className="font-heading text-3xl md:text-5xl font-bold leading-tight">
-              Prêt à Transformer Votre{" "}
-              <span className="text-amber-400">Accessibilité ?</span>
+              Prêt à Faciliter Vos{" "}
+              <span className="text-amber-400">Échanges Internationaux ?</span>
             </h2>
 
             <p className="text-lg md:text-xl text-indigo-200 max-w-2xl">
-              Rejoignez la révolution de l'inclusion et accédez aux meilleurs interprètes de France.
+              Rejoignez la plateforme de référence et collaborez avec les meilleurs traducteurs et interprètes.
             </p>
 
             <div className="flex flex-wrap gap-4 justify-center pt-4">
               <Link
                 href="/register"
-                className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-indigo-900 bg-white hover:bg-stone-50 rounded-full shadow-xl transition-all hover:shadow-2xl active:scale-[0.98]"
+                className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-indigo-900 bg-white hover:bg-stone-50 rounded-full shadow-xl transition-shadow hover:shadow-2xl active:scale-[0.98]"
               >
                 Inscrivez-vous Gratuitement
                 <ArrowRight size={20} weight="bold" />
               </Link>
               <Link
                 href="/pricing"
-                className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white border-2 border-white/20 hover:bg-white/10 rounded-full transition-all"
+                className="inline-flex items-center gap-2 px-8 py-4 text-base font-semibold text-white border-2 border-white/20 hover:bg-white/10 rounded-full transition-colors"
               >
                 Voir les Plans Pro
               </Link>

@@ -20,14 +20,14 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "LSFCONNECT | Formation LSF & Interprétation Professionnelle",
-  description: "La plateforme SaaS leader pour maîtriser la Langue des Signes Française. Formations certifiantes (Médical, Juridique, Social) et mise en relation avec des experts LSF.",
-  keywords: ["LSF", "Langue des Signes Française", "Formation LSF", "Interprète LSF", "Accessibilité", "E-learning LSF", "LSF Médical", "LSF Juridique"],
+  title: "LSFCONNECT | Interprétation & Traduction Professionnelle",
+  description: "La plateforme leader pour trouver des interprètes et traducteurs certifiés (LSF, Langues parlées, Médical, Juridique, Entreprise).",
+  keywords: ["Interprète", "Traducteur", "Traduction", "LSF", "Langue des Signes", "Accessibilité", "Langues étrangères"],
   manifest: "/manifest.json",
   themeColor: "#E11D48",
   openGraph: {
-    title: "LSFCONNECT | L'Expertise LSF à portée de main",
-    description: "Devenez expert en LSF ou trouvez un interprète certifié pour vos besoins professionnels.",
+    title: "LSFCONNECT | L'Expertise en Interprétation à portée de main",
+    description: "Trouvez un interprète ou traducteur certifié pour vos besoins professionnels.",
     url: "https://lsfconnect.fr",
     siteName: "LSFCONNECT",
     locale: "fr_FR",
@@ -35,8 +35,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "LSFCONNECT | Le Futur de l'Inclusion LSF",
-    description: "Apprenez la LSF avec des pros. Plateforme certifiante et innovante.",
+    title: "LSFCONNECT | L'Excellence en Interprétation et Traduction",
+    description: "Réservez les meilleurs professionnels certifiés. Plateforme innovante et réactive.",
   },
 };
 

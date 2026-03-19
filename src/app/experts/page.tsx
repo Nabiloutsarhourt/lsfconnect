@@ -118,11 +118,11 @@ export default function ExpertsPage() {
                                 +500 experts vérifiés
                             </div>
                             <h1 className="font-heading text-4xl md:text-5xl font-bold tracking-tight text-slate-900" data-testid="experts-page-title">
-                                Trouvez votre expert{" "}
-                                <span className="text-gradient">LSF</span>
+                                Trouvez votre expert en{" "}
+                                <span className="text-gradient">Traduction</span>
                             </h1>
                             <p className="text-lg text-stone-600 max-w-xl">
-                                Parcourez les profils de nos interprètes certifiés en Langue des Signes Française.
+                                Parcourez les profils de nos interprètes et traducteurs certifiés (LSF, Langues Étrangères).
                             </p>
                         </div>
 
@@ -239,7 +239,7 @@ export default function ExpertsPage() {
                                     </div>
 
                                     <p className="text-sm text-stone-500 line-clamp-2 mb-6">
-                                        Expert certifié en LSF avec plus de 5 ans d'expérience dans l'interprétation professionnelle.
+                                        Interprète certifié avec de nombreuses années d'expérience professionnelle en traduction simultanée et consécutive.
                                     </p>
 
                                     <div className="flex gap-3">
