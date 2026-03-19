@@ -11,12 +11,27 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        const { expertId, expertName, amount, scheduledAt } = await req.json();
+        const { expertId, expertName, amount, scheduledAt, serviceType } = await req.json();
 
-        // In a real app, we would fetch the expert's Stripe account ID from the database
-        // For this demo, we'll assume they have one or use a placeholder
-        const expertStripeAccountId = 'acct_placeholder';
+        // 1. Create a pending booking in Supabase
+        const { data: booking, error: bookingError } = await supabase
+            .from('bookings')
+            .insert({
+                client_id: user.id,
+                expert_id: expertId,
+                scheduled_at: scheduledAt,
+                duration_minutes: 60,
+                type: serviceType || 'video',
+                status: 'pending',
+                price: amount,
+                payment_status: 'pending'
+            })
+            .select()
+            .single();
 
+        if (bookingError) throw new Error(bookingError.message);
+
+        // 2. Create Stripe Checkout Session
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [
@@ -24,8 +39,8 @@ export async function POST(req: Request) {
                     price_data: {
                         currency: 'eur',
                         product_data: {
-                            name: `Session LSF avec ${expertName}`,
-                            description: `Date: ${new Date(scheduledAt).toLocaleString()}`,
+                            name: `Session avec ${expertName} (${serviceType === 'video' ? 'Visio' : 'Sur place'})`,
+                            description: `Date: ${new Date(scheduledAt).toLocaleString('fr-FR')}`,
                         },
                         unit_amount: Math.round(amount * 100),
                     },
@@ -33,18 +48,21 @@ export async function POST(req: Request) {
                 },
             ],
             mode: 'payment',
-            success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?expert_id=${expertId}&amount=${amount}`,
+            success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/booking/success?amount=${amount}`,
             cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/experts/${expertId}`,
             metadata: {
+                booking_id: booking.id,
                 client_id: user.id,
                 expert_id: expertId,
-                scheduled_at: scheduledAt,
             },
         });
 
+        // 3. Update booking with Stripe Session ID
+        await supabase.from('bookings').update({ stripe_payment_intent_id: session.id }).eq('id', booking.id);
+
         return NextResponse.json({ sessionId: session.id, url: session.url });
     } catch (err: any) {
-        console.error('Stripe Error:', err);
+        console.error('Checkout Error:', err);
         return NextResponse.json({ error: err.message }, { status: 500 });
     }
 }

@@ -1,85 +1,49 @@
-import { createClient } from "@/lib/supabase/server";
-import { headers } from "next/headers";
-import { NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
-import type Stripe from "stripe";
-
-const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET || 'whsec_dummy_for_build';
+import { NextResponse } from 'next/server';
+import { stripe } from '@/lib/stripe';
+import { createClient } from '@/lib/supabase/server';
 
 export async function POST(req: Request) {
-    const body = await req.text();
-    const signature = (await headers()).get("Stripe-Signature") as string;
+    const payload = await req.text();
+    const sig = req.headers.get('stripe-signature');
 
-    let event: Stripe.Event;
+    if (!sig || !process.env.STRIPE_WEBHOOK_SECRET) {
+        return NextResponse.json({ error: 'Missing Stripe webhook configuration' }, { status: 400 });
+    }
+
+    let event;
 
     try {
-        event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (error: any) {
-        return new NextResponse(`Webhook Error: ${error.message}`, { status: 400 });
-    }
-
-    const supabase = await createClient();
-    const session = event.data.object as Stripe.Checkout.Session;
-
-    if (event.type === "checkout.session.completed") {
-        const subscription = await stripe.subscriptions.retrieve(
-            session.subscription as string
+        event = stripe.webhooks.constructEvent(
+            payload,
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET
         );
-
-        if (!session?.metadata?.supabaseUUID) {
-            return new NextResponse("User ID is required", { status: 400 });
-        }
-
-        const { error } = await supabase.from("subscriptions").upsert({
-            user_id: session.metadata.supabaseUUID,
-            stripe_subscription_id: subscription.id,
-            stripe_customer_id: (subscription as any).customer as string,
-            status: (subscription as any).status,
-            plan_id: (subscription as any).items.data[0].price.id,
-            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
-            cancel_at_period_end: (subscription as any).cancel_at_period_end,
-        });
-
-        if (error) {
-            console.error("Supabase error during checkout completion:", error);
-            return new NextResponse("Database error", { status: 500 });
-        }
-
-        // Update profile tier
-        await supabase.from("profiles").update({ subscription_tier: "pro" }).eq("id", session.metadata.supabaseUUID);
+    } catch (err: any) {
+        console.error('Webhook Error:', err.message);
+        return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
     }
 
-    if (event.type === "customer.subscription.updated") {
-        const subscription = event.data.object as Stripe.Subscription;
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as any;
+        const bookingId = session.metadata?.booking_id;
 
-        await supabase.from("subscriptions").update({
-            status: subscription.status,
-            plan_id: subscription.items.data[0].price.id,
-            current_period_end: new Date((subscription as any).current_period_end * 1000).toISOString(),
-            cancel_at_period_end: subscription.cancel_at_period_end,
-        }).eq("stripe_subscription_id", subscription.id);
-
-        if (subscription.status === "active") {
-            const { data: subData } = await supabase.from("subscriptions").select("user_id").eq("stripe_subscription_id", subscription.id).maybeSingle();
-            if (subData) {
-                await supabase.from("profiles").update({ subscription_tier: "pro" }).eq("id", subData.user_id);
+        if (bookingId) {
+            const supabase = await createClient();
+            
+            const { error } = await supabase
+                .from('bookings')
+                .update({ 
+                    status: 'confirmed', 
+                    payment_status: 'paid' 
+                })
+                .eq('id', bookingId);
+                
+            if (error) {
+                console.error("Error updating booking status:", error.message);
+                return NextResponse.json({ error: "Failed to update booking" }, { status: 500 });
             }
         }
     }
 
-    if (event.type === "customer.subscription.deleted") {
-        const subscription = event.data.object as Stripe.Subscription;
-
-        const { data: subData } = await supabase.from("subscriptions").select("user_id").eq("stripe_subscription_id", subscription.id).maybeSingle();
-
-        await supabase.from("subscriptions").update({
-            status: "canceled",
-        }).eq("stripe_subscription_id", subscription.id);
-
-        if (subData) {
-            await supabase.from("profiles").update({ subscription_tier: "free" }).eq("id", subData.user_id);
-        }
-    }
-
-    return new NextResponse(null, { status: 200 });
+    return NextResponse.json({ received: true });
 }

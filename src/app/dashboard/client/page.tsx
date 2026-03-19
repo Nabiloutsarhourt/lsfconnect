@@ -28,23 +28,24 @@ export default function ClientDashboard() {
         async function fetchBookings() {
             const { data: { user } } = await supabase.auth.getUser();
             if (user) {
-                const { data } = await supabase
+                const { data: bookingsData } = await supabase
                     .from("bookings")
-                    .select(`
-                        id,
-                        scheduled_at,
-                        status,
-                        type,
-                        price,
-                        expert:expert_id (
-                            full_name,
-                            avatar_url
-                        )
-                    `)
+                    .select("*")
                     .eq("client_id", user.id)
                     .order("scheduled_at", { ascending: false });
 
-                if (data) setBookings(data as any);
+                if (bookingsData) {
+                    // Manually attach expert profiles to avoid postgREST foreign key ambiguity
+                    for (let b of bookingsData) {
+                        const { data: profile } = await supabase
+                            .from('profiles')
+                            .select('full_name, avatar_url')
+                            .eq('id', b.expert_id)
+                            .single();
+                        b.expert = profile || { full_name: 'Expert', avatar_url: '' };
+                    }
+                    setBookings(bookingsData as any);
+                }
             }
             setLoading(false);
         }
@@ -133,7 +134,7 @@ export default function ClientDashboard() {
                         <Card className="p-12 text-center border-dashed rounded-3xl">
                             <Video className="h-12 w-12 text-slate-200 mx-auto mb-4" />
                             <h3 className="text-xl font-bold text-slate-900">Aucun rendez-vous</h3>
-                            <p className="text-slate-500 mb-6">Vous n'avez pas encore réservé d'expert LSF.</p>
+                            <p className="text-slate-500 mb-6">Vous n'avez pas encore réservé d'interprète ou de traducteur.</p>
                             <Button asChild variant="outline" className="font-bold">
                                 <Link href="/experts">Parcourir les profils</Link>
                             </Button>

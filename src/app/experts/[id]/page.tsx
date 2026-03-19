@@ -8,7 +8,7 @@ import { LSFVideoPlayer } from "@/components/ui-custom/LSFVideoPlayer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChatWindow } from "@/components/chat/ChatWindow";
-import { Hand, MapPin, Star, Calendar, Clock, ShieldCheck, Mail, MessageSquare, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Hand, MapPin, Star, Calendar, Clock, ShieldCheck, Mail, MessageSquare, ArrowLeft, CheckCircle2, Video, Users } from "lucide-react";
 import Link from "next/link";
 
 interface ExpertDetail {
@@ -34,6 +34,27 @@ export default function ExpertDetailPage() {
     const [loading, setLoading] = useState(true);
     const [bookingPhase, setBookingPhase] = useState<"idle" | "selecting" | "confirming" | "confirmed">("idle");
     const [isChatOpen, setIsChatOpen] = useState(false);
+    
+    // Booking Form State
+    const [selectedDate, setSelectedDate] = useState<string>("");
+    const [selectedTime, setSelectedTime] = useState<string>("09:00");
+    const [serviceType, setServiceType] = useState<"video" | "in_person">("video");
+
+    // Generate next 3 days
+    const nextDays = Array.from({ length: 3 }).map((_, i) => {
+        const d = new Date();
+        d.setDate(d.getDate() + i + 1); // Tomorrow, etc.
+        return {
+            val: d.toISOString().split('T')[0],
+            label: d.toLocaleDateString("fr-FR", { weekday: "short", day: "numeric" })
+        };
+    });
+
+    useEffect(() => {
+        if (!selectedDate && nextDays.length > 0) {
+            setSelectedDate(nextDays[0].val);
+        }
+    }, [nextDays]);
 
     useEffect(() => {
         async function fetchExpert() {
@@ -63,10 +84,13 @@ export default function ExpertDetailPage() {
     }, [id]);
 
     const handleBooking = async () => {
-        if (!expert) return;
+        if (!expert || !selectedDate || !selectedTime) return;
 
         setBookingPhase("confirming");
         try {
+            // Reconstruct DateTime from user selection
+            const scheduledAt = new Date(`${selectedDate}T${selectedTime}:00`);
+            
             const response = await fetch("/api/checkout", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -74,7 +98,8 @@ export default function ExpertDetailPage() {
                     expertId: expert.id,
                     expertName: expert.full_name,
                     amount: expert.experts.hourly_rate + 2.5,
-                    scheduledAt: new Date().toISOString(), // In a real app, use selected slot
+                    scheduledAt: scheduledAt.toISOString(),
+                    serviceType: serviceType
                 }),
             });
 
@@ -215,9 +240,13 @@ export default function ExpertDetailPage() {
                                             Choisir une date
                                         </p>
                                         <div className="grid grid-cols-3 gap-2">
-                                            {["Lun 25", "Mar 26", "Mer 27"].map(d => (
-                                                <button key={d} className="py-2 border rounded-lg text-xs font-bold hover:bg-primary/5 hover:border-primary transition-all active:scale-95">
-                                                    {d}
+                                            {nextDays.map(d => (
+                                                <button 
+                                                    key={d.val} 
+                                                    onClick={() => setSelectedDate(d.val)}
+                                                    className={`py-2 border rounded-lg text-xs font-bold transition-all active:scale-95 ${selectedDate === d.val ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'hover:bg-primary/5 hover:border-primary'}`}
+                                                >
+                                                    {d.label}
                                                 </button>
                                             ))}
                                         </div>
@@ -230,10 +259,35 @@ export default function ExpertDetailPage() {
                                         </p>
                                         <div className="grid grid-cols-2 gap-2">
                                             {["09:00", "11:30", "14:00", "16:30"].map(t => (
-                                                <button key={t} className="py-2 border rounded-lg text-xs font-bold hover:bg-primary/5 hover:border-primary transition-all active:scale-95">
+                                                <button 
+                                                    key={t} 
+                                                    onClick={() => setSelectedTime(t)}
+                                                    className={`py-2 border rounded-lg text-xs font-bold transition-all active:scale-95 ${selectedTime === t ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'hover:bg-primary/5 hover:border-primary'}`}
+                                                >
                                                     {t}
                                                 </button>
                                             ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-3">
+                                        <p className="text-sm font-bold flex items-center gap-2">
+                                            <Users className="h-4 w-4 text-primary" />
+                                            Type de service
+                                        </p>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <button 
+                                                onClick={() => setServiceType('video')}
+                                                className={`py-2.5 border rounded-lg text-xs font-bold transition-all flex justify-center items-center gap-1 active:scale-95 ${serviceType === 'video' ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'hover:bg-primary/5'}`}
+                                            >
+                                                <Video className="w-4 h-4" /> Visio
+                                            </button>
+                                            <button 
+                                                onClick={() => setServiceType('in_person')}
+                                                className={`py-2.5 border rounded-lg text-xs font-bold transition-all flex justify-center items-center gap-1 active:scale-95 ${serviceType === 'in_person' ? 'bg-primary text-primary-foreground border-primary shadow-md' : 'hover:bg-primary/5'}`}
+                                            >
+                                                <MapPin className="w-4 h-4" /> Sur place
+                                            </button>
                                         </div>
                                     </div>
 
