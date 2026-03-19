@@ -8,7 +8,8 @@ import {
   ShieldCheck, Lightning, HandWaving, ArrowRight,
   GlobeSimple, Users, Trophy, ChatCircle,
   Gavel, Stethoscope, Briefcase, Heart,
-  Quotes, Play, Star, CheckCircle, Sparkle
+  Quotes, Play, Star, CheckCircle, Sparkle,
+  Translate, MicrophoneStage, FileText
 } from "@phosphor-icons/react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
@@ -195,6 +196,109 @@ export default function Home() {
                 </div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Linguistic Services Focus */}
+      <section className="py-24 bg-stone-50 border-b border-stone-100 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-900/5 rounded-full blur-[120px] pointer-events-none" />
+        
+        <div className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <motion.div
+            className="flex flex-col items-center mb-16 text-center"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="text-sm font-semibold text-amber-500 uppercase tracking-wider mb-3 block">Expertise Pluridisciplinaire</span>
+            <h2 className="font-heading text-3xl md:text-5xl font-bold text-slate-900 max-w-3xl mx-auto">
+              Des services adaptés à <span className="text-gradient">tous vos besoins</span>
+            </h2>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* LSF Service */}
+            <motion.div
+              className="group bg-white rounded-3xl p-8 border border-stone-100 shadow-sm hover:shadow-xl transition-shadow"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-indigo-50 text-indigo-900 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <HandWaving size={32} weight="duotone" />
+              </div>
+              <h3 className="font-heading text-2xl font-bold text-slate-900 mb-3">Langue des Signes (LSF)</h3>
+              <p className="text-stone-600 leading-relaxed mb-6">
+                Interprètes diplômés pour faciliter la communication entre sourds et entendants. Interventions en présentiel ou en visio.
+              </p>
+              <ul className="space-y-3">
+                {['Réunions & Conférences', 'Rendez-vous médicaux', 'Démarches juridiques'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-stone-700 font-medium">
+                    <CheckCircle size={16} weight="fill" className="text-emerald-500" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Vocal Interpretation */}
+            <motion.div
+              className="group bg-indigo-900 rounded-3xl p-8 border border-indigo-800 shadow-xl hover:shadow-2xl transition-shadow text-white relative overflow-hidden"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <div className="absolute -right-10 -top-10 text-indigo-800/30">
+                <Translate size={160} weight="duotone" />
+              </div>
+              
+              <div className="relative z-10">
+                <div className="w-16 h-16 rounded-2xl bg-white/10 text-amber-400 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform backdrop-blur-md">
+                  <MicrophoneStage size={32} weight="duotone" />
+                </div>
+                <h3 className="font-heading text-2xl font-bold text-white mb-3">Interprètes Vocaux</h3>
+                <p className="text-indigo-200 leading-relaxed mb-6">
+                  Professionnels multilingues pour la traduction instantanée à l'oral. Anglais, Espagnol, Arabe, Mandarin, etc.
+                </p>
+                <ul className="space-y-3">
+                  {['Interprétation Simultanée', 'Interprétation Consécutive', 'Chuchotage (Liaison)'].map((item, i) => (
+                    <li key={i} className="flex items-center gap-2 text-sm text-indigo-100 font-medium">
+                      <CheckCircle size={16} weight="fill" className="text-amber-400" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Written Translation */}
+            <motion.div
+              className="group bg-white rounded-3xl p-8 border border-stone-100 shadow-sm hover:shadow-xl transition-shadow"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <div className="w-16 h-16 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <FileText size={32} weight="duotone" />
+              </div>
+              <h3 className="font-heading text-2xl font-bold text-slate-900 mb-3">Traduction Écrite</h3>
+              <p className="text-stone-600 leading-relaxed mb-6">
+                Des traductions précises de tous vos documents par des linguistes certifiés. Documents standards ou assermentés.
+              </p>
+              <ul className="space-y-3">
+                {['Documents Assermentés', 'Supports Commerciaux & Web', 'Contrats et Actes Notariés'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-2 text-sm text-stone-700 font-medium">
+                    <CheckCircle size={16} weight="fill" className="text-emerald-500" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           </div>
         </div>
       </section>
