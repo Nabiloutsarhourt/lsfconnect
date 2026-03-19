@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar, MessageSquare, Video, Settings, UserCheck, MapPin } from "lucide-react";
+import Link from "next/link";
 
 export default function ExpertDashboard() {
     const supabase = createClient();
@@ -164,7 +165,15 @@ export default function ExpertDashboard() {
                                             </div>
                                         </div>
                                     </div>
-                                    <Button size="sm" className="font-bold">Rejoindre / Contacter</Button>
+                                    <div className="flex gap-2">
+                                        {b.type === 'video' ? (
+                                            <Button size="sm" className="font-bold bg-indigo-600 hover:bg-indigo-700" asChild>
+                                                <Link href={`/booking/${b.id}/room`}>Rejoindre Visio</Link>
+                                            </Button>
+                                        ) : (
+                                            <Button size="sm" variant="outline" className="font-bold border-amber-500 text-amber-600 hover:bg-amber-50">Détails</Button>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         ))}

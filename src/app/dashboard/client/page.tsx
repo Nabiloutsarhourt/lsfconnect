@@ -120,8 +120,16 @@ export default function ClientDashboard() {
                                             <div className="text-lg font-bold text-primary">{booking.price}€</div>
                                         </div>
                                     </div>
-                                    <div className="bg-slate-50/50 p-4 flex justify-between items-center border-t">
-                                        <Button variant="ghost" size="sm" className="font-bold text-xs h-8">Modifier</Button>
+                                    <div className="bg-slate-50/50 p-4 flex flex-wrap justify-between items-center border-t gap-3">
+                                        <div className="flex gap-2">
+                                            {booking.type === 'video' && booking.status === 'confirmed' && (
+                                                <Button variant="default" size="sm" className="font-bold text-xs h-8 bg-indigo-600 hover:bg-indigo-700 shadow-md" asChild>
+                                                    <Link href={`/booking/${booking.id}/room`}>
+                                                        Rejoindre Visio
+                                                    </Link>
+                                                </Button>
+                                            )}
+                                        </div>
                                         <Button variant="outline" size="sm" className="font-bold text-xs h-8 text-primary border-primary/20 hover:bg-primary/5">
                                             <MessageSquare className="mr-2 h-3 w-3" />
                                             Contacter l'expert
